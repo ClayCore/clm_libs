@@ -34,6 +34,12 @@ sources = [
 
 deps = []
 
+# Shared library for all C projects
+shared_lib_inc = ['../clm_cshared']
+shared_lib = declare_dependency(include_directories: shared_lib_inc)
+
+deps += shared_lib
+
 # --------------------------------------------------------------------------- #
 # Library build ------------------------------------------------------------- #
 # --------------------------------------------------------------------------- #
