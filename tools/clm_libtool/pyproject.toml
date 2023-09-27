@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "clm_libtool"
+description = "Updates, cleans and prepares library directories"
+version = "0.1.0"
+authors = ["claymore <marekczjk@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.7.0"
+colorama = "^0.4.4"
+classopt = "^0.2.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
