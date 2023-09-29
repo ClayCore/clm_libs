@@ -21,7 +21,8 @@ cc = meson.get_compiler('c')
 host = host_machine.system()
 
 include_dirs = [
-    include_dirs('src')
+    include_dirs('src'),
+    include_dirs('include')
 ]
 
 sources = [
