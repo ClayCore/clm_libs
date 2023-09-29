@@ -13,16 +13,10 @@ clean() {
     poetry run python src/clm_libtool.py --root_path "../../." --action "clean" --name $name
 }
 
-update() {
-    local name="$1";
-    poetry run python src/clm_libtool.py --root_path "../../." --action "clean" --name $name
-}
-
 [ $# -eq 0 ] && { echo "Usage: $0 name of library"; exit 1; }
 
 case $ACTION in 
     "prepare") prep $LIBNAME;;
     "clean") clean $LIBNAME;;
-    "update") update $LIBNAME;;
     "*") echo "unrecognized command"; exit 1;;
 esac
