@@ -4,7 +4,7 @@
 
 project(
     'libclm_carena',
-    'c'
+    ['c'],
     version: '0.1.0-dev',
     license: 'BSD-3-Clause',
     default_options: [
@@ -21,8 +21,8 @@ cc = meson.get_compiler('c')
 host = host_machine.system()
 
 include_dirs = [
-    include_dirs('src'),
-    include_dirs('include')
+    include_directories('src'),
+    include_directories('include')
 ]
 
 sources = [
@@ -50,5 +50,5 @@ library(
     sources,
     include_directories: include_dirs,
     dependencies: deps,
-    c_pch: 'inc/libc.h'
+    c_pch: 'include/libc.h'
 )
