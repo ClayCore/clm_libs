@@ -9,6 +9,12 @@
  * TYPE ALIASES
  *****************************************************************************/
 
+typedef enum
+{
+        FALSE,
+        TRUE
+} bool;
+
 #ifndef CLM_TYPEDEFS
 #define CLM_TYPEDEFS(CLM_TYPEDEF)       \
         CLM_TYPEDEF(uint8_t, u8)        \
