@@ -180,6 +180,7 @@ macro(clm_local_options)
     include(cmake/CompilerWarnings.cmake)
     clm_set_project_warnings(
         clm_warnings
+        ${clm_WARNINGS_AS_ERRORS}
         ""
         ""
         ""
@@ -224,7 +225,7 @@ macro(clm_local_options)
     endif()
 
     if(clm_ENABLE_CPPCHECK)
-        clm_enable_cppcheck(${clm_WARNINGS_AS_ERRORS})
+        clm_enable_cppcheck(${clm_WARNINGS_AS_ERRORS} "")
     endif()
 
     if(clm_ENABLE_COVERAGE)
