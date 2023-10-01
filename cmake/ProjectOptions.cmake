@@ -10,8 +10,8 @@ include(CheckCXXCompilerFlag)
 include(CheckCCompilerFlag)
 include(CMakeDependentOption)
 
-include(SystemLink.cmake)
-include(LibFuzzer.cmake)
+include(cmake/SystemLink.cmake)
+include(cmake/LibFuzzer.cmake)
 
 # ----------------------------------------------------------------------------------------------------- #
 # CMAKE MACROS ---------------------------------------------------------------------------------------- #
@@ -141,7 +141,7 @@ endmacro()
 macro(clm_global_options)
     # Enable IPO
     if(clm_ENABLE_IPO)
-        include(InterproceduralOptimization.cmake)
+        include(cmake/InterproceduralOptimization.cmake)
         clm_enable_ipo()
     endif()
 
@@ -150,10 +150,10 @@ macro(clm_global_options)
 
     # Enable hardening
     if(clm_ENABLE_HARDENING AND clm_ENABLE_GLOBAL_HARDENING)
-        include(Hardening.cmake)
+        include(cmake/Hardening.cmake)
 
         if(
-            NOT SUPPORTS UBSAN
+            NOT SUPPORTS_UBSAN
             OR clm_ENABLE_SANITIZER_ADDRESS
             OR clm_ENABLE_SANITIZER_THREAD
             OR clm_ENABLE_SANITIZER_LEAK
@@ -164,7 +164,6 @@ macro(clm_global_options)
             set(ENABLE_UBSAN_MINIMAL_RUNTIME TRUE)
         endif()
 
-        # message("${clm_ENABLE_HARDENING} ${ENABLE_UBSAN_MINIMAL_RUNTIME} ${clm_ENABLE_SANITIZER_UNDEFINED}")
         clm_enable_hardening(clm_options ON ${ENABLE_UBSAN_MINIMAL_RUNTIME})
     endif()
 endmacro()
@@ -172,13 +171,13 @@ endmacro()
 # Describes and defined local options
 macro(clm_local_options)
     if(PROJECT_IS_TOP_LEVEL)
-        include(StandardProjectSettings.cmake)
+        include(cmake/StandardProjectSettings.cmake)
     endif()
 
     add_library(clm_warnings INTERFACE)
     add_library(clm_options INTERFACE)
 
-    include(CompilerWarnings.cmake)
+    include(cmake/CompilerWarnings.cmake)
     clm_set_project_warnings(
         clm_warnings
         ""
@@ -188,11 +187,11 @@ macro(clm_local_options)
     )
 
     if(clm_ENABLE_USER_LINKER)
-        include(Linker.cmake)
+        include(cmake/Linker.cmake)
         clm_configure_linker(clm_options)
     endif()
 
-    include(Sanitizers.cmake)
+    include(cmake/Sanitizers.cmake)
     clm_enable_sanitizers(
         clm_options
         ${clm_ENABLE_SANITIZER_ADDRESS}
@@ -214,11 +213,11 @@ macro(clm_local_options)
     endif()
 
     if(clm_ENABLE_CACHE)
-        include(Cache.cmake)
+        include(cmake/Cache.cmake)
         clm_enable_cache()
     endif()
 
-    include(StaticAnalyzers.cmake)
+    include(cmake/StaticAnalyzers.cmake)
 
     if(clm_ENABLE_CLANG_TIDY)
         clm_enable_clang_tidy(clm_options ${clm_WARNINGS_AS_ERRORS})
@@ -229,12 +228,12 @@ macro(clm_local_options)
     endif()
 
     if(clm_ENABLE_COVERAGE)
-        include(Tests.cmake)
+        include(cmake/Tests.cmake)
         clm_enable_coverage(clm_options)
     endif()
 
     if(clm_ENABLE_HARDENING AND NOT clm_ENABLE_GLOBAL_HARDENING)
-        include(Hardening.cmake)
+        include(cmake/Hardening.cmake)
 
         if(
             NOT SUPPORTS_UBSAN
