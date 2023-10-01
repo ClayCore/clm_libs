@@ -92,9 +92,6 @@ if(MSVC)
     set_target_properties(${all_targets} PROPERTIES VS_DEBUGGER_ENVIRONMENT "PATH=$(VC_ExecutablePath_x64);%PATH%")
 endif()
 
-# Set startup project for msvc
-set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT intro)
-
 if(CMAKE_SKIP_INSTALL_RULES)
     return()
 endif()
@@ -103,7 +100,6 @@ include(cmake/PackageProject.cmake)
 
 clm_package_project(
     TARGETS
-    intro
     clm_options
     clm_warnings
 )
