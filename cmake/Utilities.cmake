@@ -39,6 +39,12 @@ function(set_env_from_string env_string)
     endforeach()
 endfunction()
 
+function(get_all_targets var)
+    set(targets)
+    get_all_targets_recursive(targets ${CMAKE_CURRENT_SOURCE_DIR})
+    set(${var} ${targets} PARENT_SCOPE)
+endfunction()
+
 function(get_all_installable_targets var)
     set(targets)
     get_all_targets(targets)
