@@ -61,7 +61,9 @@ add_library(clm::clm_warnings ALIAS clm_warnings)
 add_subdirectory(configured_files)
 
 # Add source directory here.
-# add_subdirectory(src)
+add_subdirectory(clm_libc)
+add_subdirectory(clm_libcpp)
+
 if(NOT PROJECT_IS_TOP_LEVEL)
     return()
 endif()
