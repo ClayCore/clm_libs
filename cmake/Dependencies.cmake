@@ -3,7 +3,7 @@
 # Allows dependency setup and configuration
 # ----------------------------------------------------------------------------------------------------- #
 
-include(CPM.cmake)
+include(cmake/CPM.cmake)
 
 function(clm_setup_dependencies)
     # if(NOT TARGET fmtlib::fmtlib)
