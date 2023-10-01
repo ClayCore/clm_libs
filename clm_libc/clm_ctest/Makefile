@@ -1,16 +1,12 @@
-.PHONY: build_minsize build_opt clean
+.PHONY: prepare build clean
 
 BUILDDIR := target
 
-$(BUILDDIR):
-	mkdir -p $@
+prepare: | $(BUILDDIR)
+	cmake -S . -B $(BUILDDIR)
 
-build_minsize: | $(BUILDDIR)
-	meson setup $(BUILDDIR) -Dbuildtype=minsize
-	meson compile -C $(BUILDDIR)
-
-build_opt: | $(BUILDDIR)
-	meson setup $(BUILDDIR) -Dbuildtype=release
+build: | $(BUILDDIR)
+	cmake --build $(BUILDDIR)
 
 clean: | $(BUILDDIR)
 	rm -rf $(BUILDDIR)
