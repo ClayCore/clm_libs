@@ -46,6 +46,8 @@ clm_setup_dependencies()
 clm_local_options()
 
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+set(CMAKE_C_VISIBILITY_PRESET hidden)
+
 set(GIT_SHA "Unknown" CACHE STRING "SHA this build was generated from")
 string(SUBSTRING "${GIT_SHA}" 0 8 GIT_SHORT_SHA)
 
