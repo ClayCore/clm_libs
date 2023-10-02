@@ -2,7 +2,6 @@ include(GenerateExportHeader)
 
 file(GLOB_RECURSE clm_cstring_sources "src/" "*.c")
 add_library(clm_cstring ${clm_cstring_sources})
-
 add_library(clm::clm_cstring ALIAS clm_cstring)
 
 target_link_libraries(clm_cstring PRIVATE clm_options clm_warnings)

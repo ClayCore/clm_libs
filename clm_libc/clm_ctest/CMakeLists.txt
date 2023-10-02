@@ -2,7 +2,6 @@ include(GenerateExportHeader)
 
 file(GLOB_RECURSE clm_ctest_sources "src/" "*.c")
 add_library(clm_ctest ${clm_ctest_sources})
-
 add_library(clm::clm_ctest ALIAS clm_ctest)
 
 target_link_libraries(clm_ctest PRIVATE clm_options clm_warnings)

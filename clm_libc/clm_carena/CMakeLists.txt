@@ -2,7 +2,6 @@ include(GenerateExportHeader)
 
 file(GLOB_RECURSE clm_carena_sources "src/" "*.c")
 add_library(clm_carena ${clm_carena_sources})
-
 add_library(clm::clm_carena ALIAS clm_carena)
 
 target_link_libraries(clm_carena PRIVATE clm_options clm_warnings)
