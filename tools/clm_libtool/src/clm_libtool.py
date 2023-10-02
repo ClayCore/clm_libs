@@ -14,7 +14,7 @@ EXCLUDE_LIST = ["target", "build", "docs", "private"]
 
 # List of paths (relative to root) to include when updating or preparing
 # the library directory
-INCLUDE_LIST = ["Makefile", ".clang-format", ".vscode", "LICENSE"]
+INCLUDE_LIST = ["make.py", "Makefile", ".clang-format", ".vscode", "LICENSE"]
 
 
 # Utility for replacing the functionality of `shutil.copytree`
