@@ -208,8 +208,8 @@ macro(clm_local_options)
         target_precompile_headers(
             clm_options
             INTERFACE
-
-            # TODO check for language and add headers
+            $<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_LIST_DIR}/pch/libcxx.hpp>
+            $<$<COMPILE_LANGUAGE:C>:${CMAKE_CURRENT_LIST_DIR}/pch/libc.h>
         )
     endif()
 
