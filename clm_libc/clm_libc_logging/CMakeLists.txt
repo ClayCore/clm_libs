@@ -7,35 +7,35 @@ if(NOT DEFINED CLM_BUILD_LIB_TYPE)
 endif()
 
 add_library(
-    clm_libc_arena
+    clm_libc_logging
     ${CLM_BUILD_LIB_TYPE}
 )
-add_library(clm::clm_libc_arena ALIAS clm_libc_arena)
+add_library(clm::clm_libc_logging ALIAS clm_libc_logging)
 
 target_sources(
-    clm_libc_arena
+    clm_libc_logging
     PRIVATE
-    src/clm_arena.c
+    src/clm_logging.c
 )
 target_link_libraries(
-    clm_libc_arena
+    clm_libc_logging
     PRIVATE clm_options clm_warnings
 )
 target_include_directories(
-    clm_libc_arena
+    clm_libc_logging
     ${WARNING_GUARD}
     PUBLIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/clm_libc/clm_libc_shared/include>
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/clm_libc/clm_libc_arena/include>
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/clm_libc/clm_libc_arena/src>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/clm_libc/clm_libc_logging/include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/clm_libc/clm_libc_logging/src>
     $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/clm_libc/clm_libc_shared/include>
-    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/clm_libc/clm_libc_arena/include>
-    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/clm_libc/clm_libc_arena/src>
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/clm_libc/clm_libc_logging/include>
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/clm_libc/clm_libc_logging/src>
 )
-target_compile_features(clm_libc_arena PRIVATE c_std_17)
+target_compile_features(clm_libc_logging PRIVATE c_std_17)
 
 set_target_properties(
-    clm_libc_arena
+    clm_libc_logging
     PROPERTIES
     VERSION ${PROJECT_VERSION}
     C_VISIBILITY_PRESET hidden
