@@ -1,12 +1,12 @@
 .PHONY: prepare build clean
 
-BUILDDIR := target
+BUILDDIR := build
 
 prepare: | $(BUILDDIR)
-	cmake -S . -B $(BUILDDIR)
+	cmake -S . -B $(BUILDDIR) -G "Ninja" -DCMAKE_BUILD_TYPE=Release
 
 build: | $(BUILDDIR)
-	cmake --build $(BUILDDIR)
+	cmake --build $(BUILDDIR) --config Release
 
 clean: | $(BUILDDIR)
 	rm -rf $(BUILDDIR)
