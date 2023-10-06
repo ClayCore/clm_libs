@@ -1,18 +1,10 @@
-# ----------------------------------------------------------------------------------------------------- #
-# `PreventInSourceBuilds.cmake`
-# Prevents in-source builds by checking equality between `CMAKE_SOURCE_DIR`
-# and `CMAKE_BINARY_DIR`
-# ----------------------------------------------------------------------------------------------------- #
-
-function(clm_assure_out_of_source_build)
+function(assure_out_of_bounds_builds)
     get_filename_component(srcdir "${CMAKE_SOURCE_DIR}" REALPATH)
     get_filename_component(bindir "${CMAKE_BINARY_DIR}" REALPATH)
 
     if("${srcdir}" STREQUAL "${bindir}")
-        message("** WARNING: in-source builds are disabled")
-        message("*** Please create a separate build directory and run cmake from there")
-        message(FATAL_ERROR "Quitting configuration")
+        message(WARNING "* in-source builds are disabled. Please create a separate build directory")
     endif()
 endfunction()
 
-clm_assure_out_of_source_build()
+assure_out_of_bounds_builds()

@@ -1,29 +1,21 @@
-# ----------------------------------------------------------------------------------------------------- #
-# `Cache.cmake`
-# Check and enable support for compiler cache
-# ----------------------------------------------------------------------------------------------------- #
-
 function(clm_enable_cache)
-    set(CACHE_OPTION "ccache" CACHE STRING "Compiler cache to be used")
-    set(CACHE_OPTION_VALUES "ccache" "sccache")
-    set_property(CACHE CACHE_OPTION PROPERTY STRINGS ${CACHE_OPTION_VALUES})
+    set(CLM_CACHE_OPTION "ccache" CACHE STRING "Compiler cache to be used")
+    set(CLM_CACHE_OPTION_VALUES "ccache" "sccache")
+    set_property(CACHE CLM_CACHE_OPTION PROPERTY STRINGS ${CLM_CACHE_OPTION_VALUES})
 
-    list(FIND CACHE_OPTION_VALUES ${CACHE_OPTION} CACHE_OPTION_INDEX)
+    list(FIND CLM_CACHE_OPTION_VALUES ${CLM_CACHE_OPTION} CLM_CACHE_OPTION_INDEX)
 
-    if(${CACHE_OPTION_INDEX} EQUAL -1)
-        message(
-            STATUS
-            "** Using custom compiler cache system: '${CACHE_OPTION}', supported entries are: ${CACHE_OPTION_VALUES}"
-        )
+    if(${CLM_CACHE_OPTION_INDEX} EQUAL -1)
+        message(STATUS "** Using custom compiler cache: '${CLM_CACHE_OPTION}', supported entries: ${CLM_CACHE_OPTION_VALUES}")
     endif()
 
-    find_program(CACHE_BINARY NAMES ${CACHE_OPTION_VALUES})
+    find_program(clm_cache_binary NAMES ${CLM_CACHE_OPTION_VALUES})
 
-    if(CACHE_BINARY)
-        message(STATUS "** ${CACHE_BINARY} found and enabled")
-        set(CMAKE_CXX_COMPILER_LAUNCHER ${CACHE_BINARY} CACHE FILEPATH "** CXX compiler cache used")
-        set(CMAKE_C_COMPILER_LAUNCHER ${CACHE_BINARY} CACHE FILEPATH "** C compiler cache used")
+    if(clm_cache_binary)
+        message(STATUS "** ${clm_cache_binary} found and enabled")
+        set(CMAKE_CXX_COMPILER_LAUNCHER ${clm_cache_binary} CACHE FILEPATH "CXX compiler cache used")
+        set(CMAKE_C_COMPILER_LAUNCHER ${clm_cache_binary} CACHE FILEPATH "C compiler cache used")
     else()
-        message(WARNING "** ${CACHE_OPTION} is enabled but was not found. Not using.")
+        message(WARNING "!! ${CLM_CACHE_OPTION} is enabled but was not found.")
     endif()
 endfunction()

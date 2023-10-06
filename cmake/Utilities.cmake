@@ -1,23 +1,18 @@
-# ----------------------------------------------------------------------------------------------------- #
-# `Utilities.cmake`
-# Various CMake utilities
-# ----------------------------------------------------------------------------------------------------- #
-
-function(find_substring_by_prefix output prefix input)
+function(clm_find_substr_by_prefix output prefix input)
     string(FIND "${input}" "${prefix}" prefix_index)
 
     if("${prefix_index}" STREQUAL "-1")
-        message(SEND_ERROR "** Could not find ${prefix} in ${input}")
+        message(SEND_ERROR ";; could not find ${prefix} in ${input}")
     endif()
 
     string(LENGTH "${prefix}" prefix_length)
     math(EXPR start_index "${prefix_index} + ${prefix_length}")
-
     string(SUBSTRING "${input}" "${start_index}" "-1" _output)
+
     set("${output}" "${_output}" PARENT_SCOPE)
 endfunction()
 
-function(set_env_from_string env_string)
+function(clm_set_env_from_string env_string)
     string(REGEX REPLACE ";" "__sep__" env_string_sep_added "${env_string}")
     string(REGEX REPLACE "\r?\n" ";" env_list "${env_string_sep_added}")
 
@@ -30,6 +25,7 @@ function(set_env_from_string env_string)
             list(GET env_parts 1 env_value)
 
             string(REGEX REPLACE "__sep__" ";" env_value "${env_value}")
+
             set(ENV{${env_name}} "${env_value}")
 
             if("${env_name}" EQUAL "PATH")
@@ -39,15 +35,17 @@ function(set_env_from_string env_string)
     endforeach()
 endfunction()
 
-function(get_all_targets var)
+function(clm_get_all_targets result)
     set(targets)
-    get_all_targets_recursive(targets ${CMAKE_CURRENT_SOURCE_DIR})
-    set(${var} ${targets} PARENT_SCOPE)
+
+    clm_get_all_targets_recurse(targets ${CMAKE_CURRENT_SOURCE_DIR})
+
+    set(${result} ${targets} PARENT_SCOPE)
 endfunction()
 
-function(get_all_installable_targets var)
+function(clm_get_all_installable_targets result)
     set(targets)
-    get_all_targets(targets)
+    clm_get_all_targets(targets)
 
     foreach(_target ${targets})
         get_target_property(_target_type ${_target} TYPE)
@@ -57,28 +55,28 @@ function(get_all_installable_targets var)
         endif()
     endforeach()
 
-    set(${var} ${targets} PARENT_SCOPE)
+    set(${result} ${targets} PARENT_SCOPE)
 endfunction()
 
-macro(get_all_targets_recursive targets dir)
-    get_property(subdirectories DIRECTORY ${dir} PROPERTY SUBDIRECTORIES)
+macro(clm_get_all_targets_recurse targets dir)
+    get_property(subdirs DIRECTORY ${dir} PROPERTY SUBDIRECTORIES)
 
-    foreach(subdir ${subdirectories})
-        get_all_targets_recursive(${targets} ${subdir})
+    foreach(subdir ${subdirs})
+        clm_get_all_targets_recurse(${targets} ${subdir})
     endforeach()
 
     get_property(current_targets DIRECTORY ${dir} PROPERTY BUILDSYSTEM_TARGETS)
     list(APPEND ${targets} ${current_targets})
 endmacro()
 
-function(is_verbose var)
+function(clm_is_verbose result)
     if(
         "CMAKE_MESSAGE_LOG_LEVEL" STREQUAL "VERBOSE"
         OR "CMAKE_MESSAGE_LOG_LEVEL" STREQUAL "DEBUG"
         OR "CMAKE_MESSAGE_LOG_LEVEL" STREQUAL "TRACE"
     )
-        set(${var} ON PARENT_SCOPE)
+        set(${result} ON PARENT_SCOPE)
     else()
-        set(${var} OFF PARENT_SCOPE)
+        set(${result} OFF PARENT_SCOPE)
     endif()
 endfunction()

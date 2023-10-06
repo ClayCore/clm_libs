@@ -1,174 +1,157 @@
-# ----------------------------------------------------------------------------------------------------- #
-# `ProjectOptions.cmake`
-# User configuration for the project
-# ----------------------------------------------------------------------------------------------------- #
-
-# ----------------------------------------------------------------------------------------------------- #
-# CMAKE MODULES --------------------------------------------------------------------------------------- #
-# ----------------------------------------------------------------------------------------------------- #
-include(CheckCXXCompilerFlag)
-include(CheckCCompilerFlag)
-include(CMakeDependentOption)
-
 include(cmake/SystemLink.cmake)
 include(cmake/LibFuzzer.cmake)
 
-# ----------------------------------------------------------------------------------------------------- #
-# CMAKE MACROS ---------------------------------------------------------------------------------------- #
-# ----------------------------------------------------------------------------------------------------- #
+include(CheckCCompilerFlag)
+include(CheckCXXCompilerFlag)
+include(CMakeDependentOption)
 
-# Check if compiler supports sanitizers
 macro(clm_supports_sanitizers)
     if(
-        (CMAKE_CXX_COMPILER_ID MATCHES ".*Clang.*" OR CMAKE_CXX_COMPILER_ID MATCHES ".*GNU.*")
+        (CMAKE_CXX_COMPILER_ID MATCHES ".*Clang.*"
+        OR CMAKE_CXX_COMPILER_ID MATCHES ".*GNU.*")
         AND NOT WIN32
     )
-        set(SUPPORTS_UBSAN ON)
+        set(CLM_SUPPORTS_UBSAN ON)
     else()
-        set(SUPPORTS_UBSAN OFF)
+        set(CLM_SUPPORTS_UBSAN OFF)
     endif()
 
     if(
-        (CMAKE_CXX_COMPILER_ID MATCHES ".*Clang.*" OR CMAKE_CXX_COMPILER_ID MATCHES ".*GNU.*")
-        AND WIN32
-    )
-        set(SUPPORTS_ASAN OFF)
-    else()
-        set(SUPPORTS_UBSAN ON)
-    endif()
-
-    if(
-        (CMAKE_C_COMPILER_ID MATCHES ".*Clang.*" OR CMAKE_C_COMPILER_ID MATCHES ".*GNU.*")
+        (CMAKE_C_COMPILER MATCHES ".*Clang.*"
+        OR CMAKE_C_COMPILER MATCHES ".*GNU.*")
         AND NOT WIN32
     )
-        set(SUPPORTS_UBSAN ON)
+        set(CLM_SUPPORTS_UBSAN ON)
     else()
-        set(SUPPORTS_UBSAN OFF)
+        set(CLM_SUPPORTS_UBSAN OFF)
     endif()
 
     if(
-        (CMAKE_C_COMPILER_ID MATCHES ".*Clang.*" OR CMAKE_C_COMPILER_ID MATCHES ".*GNU.*")
+        (CMAKE_CXX_COMPILER_ID MATCHES ".*Clang.*"
+        OR CMAKE_CXX_COMPILER_ID MATCHES ".*GNU.*")
         AND WIN32
     )
-        set(SUPPORTS_ASAN OFF)
+        set(CLM_SUPPORTS_ASAN OFF)
     else()
-        set(SUPPORTS_UBSAN ON)
+        set(CLM_SUPPORTS_ASAN ON)
+    endif()
+
+    if(
+        (CMAKE_C_COMPILER MATCHES ".*Clang.*"
+        OR CMAKE_C_COMPILER MATCHES ".*GNU.*")
+        AND WIN32
+    )
+        set(CLM_SUPPORTS_ASAN OFF)
+    else()
+        set(CLM_SUPPORTS_ASAN ON)
     endif()
 endmacro()
 
-# Describes and defines all setup options
 macro(clm_setup_options)
-    # Hardening and coverage
-    option(clm_ENABLE_HARDENING "Enable hardening" ON)
-    option(clm_ENABLE_COVERAGE "Enable coverage reporting" OFF)
-
+    option(CLM_ENABLE_HARDENING "Enable hardening" ON)
+    option(CLM_ENABLE_COVERAGE "Enable coverage reporting" OFF)
     cmake_dependent_option(
-        clm_ENABLE_GLOBAL_HARDENING
+        CLM_ENABLE_GLOBAL_HARDENING
         "Attempt to push hardening options to built dependencies"
         ON
-        clm_ENABLE_HARDENING
+        CLM_ENABLE_HARDENING
         OFF
     )
 
-    # Check sanitizer support
     clm_supports_sanitizers()
 
-    if(NOT PROJECT_IS_TOP_LEVEL OR clm_PACKAGING_MAINTAINER_MODE)
-        option(clm_ENABLE_IPO "Enable IPO/LTO" OFF)
-        option(clm_WARNINGS_AS_ERRORS "Treat Warnings as Errors" OFF)
-        option(clm_ENABLE_USER_LINKER "Enable user-selected linker" OFF)
-        option(clm_ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" OFF)
-        option(clm_ENABLE_SANITIZER_LEAK "Enable leak sanitizer" OFF)
-        option(clm_ENABLE_SANITIZER_UNDEFINED "Enable undefined sanitizer" OFF)
-        option(clm_ENABLE_SANITIZER_THREAD "Enable thread sanitizer" OFF)
-        option(clm_ENABLE_SANITIZER_MEMORY "Enable memory sanitizer" OFF)
-        option(clm_ENABLE_UNITY_BUILD "Enable unity builds" OFF)
-        option(clm_ENABLE_CLANG_TIDY "Enable clang-tidy" OFF)
-        option(clm_ENABLE_CPPCHECK "Enable cpp-check analysis" OFF)
-        option(clm_ENABLE_PCH "Enable precompiled headers" OFF)
-        option(clm_ENABLE_CACHE "Enable ccache" OFF)
+    if(NOT PROJECT_IS_TOP_LEVEL OR CLM_PACKAGING_MAINTAINER_MODE)
+        option(CLM_ENABLE_IPO "Enable IPO/LTO" OFF)
+        option(CLM_WARNINGS_AS_ERRORS "Treat Warnings as Errors" OFF)
+        option(CLM_ENABLE_USER_LINKER "Enable user-selected linker" OFF)
+        option(CLM_ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" OFF)
+        option(CLM_ENABLE_SANITIZER_LEAK "Enable leak sanitizer" OFF)
+        option(CLM_ENABLE_SANITIZER_MEMORY "Enable memory sanitizer" OFF)
+        option(CLM_ENABLE_SANITIZER_THREAD "Enable thread sanitizer" OFF)
+        option(CLM_ENABLE_SANITIZER_UNDEFINED "Enable undefined sanitizer" OFF)
+        option(CLM_ENABLE_UNITY_BUILD "Enable unity builds" OFF)
+        option(CLM_ENABLE_CLANG_TIDY "Enable clang-tidy" OFF)
+        option(CLM_ENABLE_CPPCHECK "Enable cppcheck analysis" OFF)
+        option(CLM_ENABLE_PCH "Enable precompiled headers" OFF)
+        option(CLM_ENABLE_CACHE "Enable compiler cache" OFF)
     else()
-        option(clm_ENABLE_IPO "Enable IPO/LTO" ON)
-        option(clm_WARNINGS_AS_ERRORS "Treat Warnings As Errors" ON)
-        option(clm_ENABLE_USER_LINKER "Enable user-selected linker" OFF)
-        option(clm_ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" ${SUPPORTS_ASAN})
-        option(clm_ENABLE_SANITIZER_LEAK "Enable leak sanitizer" OFF)
-        option(clm_ENABLE_SANITIZER_UNDEFINED "Enable undefined sanitizer" ${SUPPORTS_UBSAN})
-        option(clm_ENABLE_SANITIZER_THREAD "Enable thread sanitizer" OFF)
-        option(clm_ENABLE_SANITIZER_MEMORY "Enable memory sanitizer" OFF)
-        option(clm_ENABLE_UNITY_BUILD "Enable unity builds" OFF)
-        option(clm_ENABLE_CLANG_TIDY "Enable clang-tidy" ON)
-        option(clm_ENABLE_CPPCHECK "Enable cpp-check analysis" ON)
-        option(clm_ENABLE_PCH "Enable precompiled headers" OFF)
-        option(clm_ENABLE_CACHE "Enable ccache" ON)
+        option(CLM_ENABLE_IPO "Enable IPO/LTO" ON)
+        option(CLM_WARNINGS_AS_ERRORS "Treat Warnings as Errors" ON)
+        option(CLM_ENABLE_USER_LINKER "Enable user-selected linker" OFF)
+        option(CLM_ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" ${CLM_SUPPORTS_ASAN})
+        option(CLM_ENABLE_SANITIZER_LEAK "Enable leak sanitizer" OFF)
+        option(CLM_ENABLE_SANITIZER_MEMORY "Enable memory sanitizer" OFF)
+        option(CLM_ENABLE_SANITIZER_THREAD "Enable thread sanitizer" OFF)
+        option(CLM_ENABLE_SANITIZER_UNDEFINED "Enable undefined sanitizer" ${CLM_SUPPORTS_UBSAN})
+        option(CLM_ENABLE_UNITY_BUILD "Enable unity builds" OFF)
+        option(CLM_ENABLE_CLANG_TIDY "Enable clang-tidy" ON)
+        option(CLM_ENABLE_CPPCHECK "Enable cppcheck analysis" ON)
+        option(CLM_ENABLE_PCH "Enable precompiled headers" OFF)
+        option(CLM_ENABLE_CACHE "Enable compiler cache" ON)
     endif()
 
     if(NOT PROJECT_IS_TOP_LEVEL)
         mark_as_advanced(
-            clm_ENABLE_IPO
-            clm_WARNINGS_AS_ERRORS
-            clm_ENABLE_USER_LINKER
-            clm_ENABLE_SANITIZER_ADDRESS
-            clm_ENABLE_SANITIZER_LEAK
-            clm_ENABLE_SANITIZER_UNDEFINED
-            clm_ENABLE_SANITIZER_THREAD
-            clm_ENABLE_SANITIZER_MEMORY
-            clm_ENABLE_UNITY_BUILD
-            clm_ENABLE_CLANG_TIDY
-            clm_ENABLE_CPPCHECK
-            clm_ENABLE_COVERAGE
-            clm_ENABLE_PCH
-            clm_ENABLE_CACHE
+            CLM_ENABLE_IPO
+            CLM_WARNINGS_AS_ERRORS
+            CLM_ENABLE_USER_LINKER
+            CLM_ENABLE_SANITIZER_ADDRESS
+            CLM_ENABLE_SANITIZER_LEAK
+            CLM_ENABLE_SANITIZER_MEMORY
+            CLM_ENABLE_SANITIZER_THREAD
+            CLM_ENABLE_SANITIZER_UNDEFINED
+            CLM_ENABLE_UNITY_BUILD
+            CLM_ENABLE_CLANG_TIDY
+            CLM_ENABLE_CPPCHECK
+            CLM_ENABLE_COVERAGE
+            CLM_ENABLE_PCH
+            CLM_ENABLE_CACHE
         )
     endif()
 
-    # Fuzzer support
-    clm_check_libfuzzer_support(LIBFUZZER_SUPPORTED)
+    clm_check_libfuzzer_support(CLM_LIBFUZZER_SUPPORTED)
 
     if(
-        LIBFUZZER_SUPPORTED AND
-        (clm_ENABLE_SANITIZER_ADDRESS OR clm_ENABLE_SANITIZER_THREAD OR clm_ENABLE_SANITIZER_UNDEFINED)
+        CLM_LIBFUZZER_SUPPORTED AND
+        (CLM_ENABLE_SANITIZER_ADDRESS OR
+        CLM_ENABLE_SANITIZER_THREAD OR
+        CLM_ENABLE_SANITIZER_UNDEFINED)
     )
-        set(DEFAULT_FUZZER ON)
+        set(CLM_DEFAULT_FUZZER ON)
     else()
-        set(DEFAULT_FUZZER OFF)
+        set(CLM_DEFAULT_FUZZER OFF)
     endif()
 
-    option(clm_BUILD_FUZZ_TESTS "Enable fuzz testing executable" ${DEFAULT_FUZZER})
+    option(CLM_BUILD_FUZZ_TESTS "Enable fuzz testing executable" ${CLM_DEFAULT_FUZZER})
 endmacro()
 
-# Describes and defines all global options
 macro(clm_global_options)
-    # Enable IPO
-    if(clm_ENABLE_IPO)
+    if(CLM_ENABLE_IPO)
         include(cmake/InterproceduralOptimization.cmake)
         clm_enable_ipo()
     endif()
 
-    # Sanitizer support
     clm_supports_sanitizers()
 
-    # Enable hardening
-    if(clm_ENABLE_HARDENING AND clm_ENABLE_GLOBAL_HARDENING)
+    if(CLM_ENABLE_HARDENING AND CLM_ENABLE_GLOBAL_HARDENING)
         include(cmake/Hardening.cmake)
 
         if(
-            NOT SUPPORTS_UBSAN
-            OR clm_ENABLE_SANITIZER_ADDRESS
-            OR clm_ENABLE_SANITIZER_THREAD
-            OR clm_ENABLE_SANITIZER_LEAK
-            OR clm_ENABLE_SANITIZER_UNDEFINED
+            NOT CLM_SUPPORTS_UBSAN
+            OR CLM_ENABLE_SANITIZER_ADDRESS
+            OR CLM_ENABLE_SANITIZER_LEAK
+            OR CLM_ENABLE_SANITIZER_THREAD
+            OR CLM_ENABLE_SANITIZER_UNDEFINED
         )
-            set(ENABLE_UBSAN_MINIMAL_RUNTIME FALSE)
+            set(CLM_ENABLE_UBSAN_MINIMAL_RUNTIME FALSE)
         else()
-            set(ENABLE_UBSAN_MINIMAL_RUNTIME TRUE)
+            set(CLM_ENABLE_UBSAN_MINIMAL_RUNTIME TRUE)
         endif()
 
-        clm_enable_hardening(clm_options ON ${ENABLE_UBSAN_MINIMAL_RUNTIME})
+        clm_enable_hardening(clm_options ON ${CLM_ENABLE_UBSAN_MINIMAL_RUNTIME})
     endif()
 endmacro()
 
-# Describes and defined local options
 macro(clm_local_options)
     if(PROJECT_IS_TOP_LEVEL)
         include(cmake/StandardProjectSettings.cmake)
@@ -180,14 +163,11 @@ macro(clm_local_options)
     include(cmake/CompilerWarnings.cmake)
     clm_set_project_warnings(
         clm_warnings
-        ${clm_WARNINGS_AS_ERRORS}
-        ""
-        ""
-        ""
-        ""
+        ${CLM_WARNINGS_AS_ERRORS}
+        "" "" "" ""
     )
 
-    if(clm_ENABLE_USER_LINKER)
+    if(CLM_ENABLE_USER_LINKER)
         include(cmake/Linker.cmake)
         clm_configure_linker(clm_options)
     endif()
@@ -195,59 +175,59 @@ macro(clm_local_options)
     include(cmake/Sanitizers.cmake)
     clm_enable_sanitizers(
         clm_options
-        ${clm_ENABLE_SANITIZER_ADDRESS}
-        ${clm_ENABLE_SANITIZER_LEAK}
-        ${clm_ENABLE_SANITIZER_UNDEFINED}
-        ${clm_ENABLE_SANITIZER_THREAD}
-        ${clm_ENABLE_SANITIZER_MEMORY}
+        ${CLM_ENABLE_SANITIZER_ADDRESS}
+        ${CLM_ENABLE_SANITIZER_LEAK}
+        ${CLM_ENABLE_SANITIZER_MEMORY}
+        ${CLM_ENABLE_SANITIZER_THREAD}
+        ${CLM_ENABLE_SANITIZER_UNDEFINED}
     )
 
-    set_target_properties(clm_options PROPERTIES UNITY_BUILD ${clm_ENABLE_UNITY_BUILD})
+    set_target_properties(clm_options PROPERTIES UNITY_BUILD ${CLM_ENABLE_UNITY_BUILD})
 
-    if(clm_ENABLE_PCH)
+    if(CLM_ENABLE_PCH)
         target_precompile_headers(
             clm_options
             INTERFACE
-            $<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_LIST_DIR}/pch/libcxx.hpp>
-            $<$<COMPILE_LANGUAGE:C>:${CMAKE_CURRENT_LIST_DIR}/pch/libc.h>
+            $<$<COMPILE_LANGUAGE:CXX>:${CMAKE_SOURCE_DIR}/pch/libcpp.hpp>
+            $<$<COMPILE_LANGUAGE:C>:${CMAKE_SOURCE_DIR}/pch/libc.h>
         )
     endif()
 
-    if(clm_ENABLE_CACHE)
+    if(CLM_ENABLE_CACHE)
         include(cmake/Cache.cmake)
         clm_enable_cache()
     endif()
 
     include(cmake/StaticAnalyzers.cmake)
 
-    if(clm_ENABLE_CLANG_TIDY)
-        clm_enable_clang_tidy(clm_options ${clm_WARNINGS_AS_ERRORS})
+    if(CLM_ENABLE_CLANG_TIDY)
+        clm_enable_clang_tidy(clm_options ${CLM_WARNINGS_AS_ERRORS})
     endif()
 
-    if(clm_ENABLE_CPPCHECK)
-        clm_enable_cppcheck(${clm_WARNINGS_AS_ERRORS} "")
+    if(CLM_ENABLE_CPPCHECK)
+        clm_enable_cppcheck(${CLM_WARNINGS_AS_ERRORS} "")
     endif()
 
-    if(clm_ENABLE_COVERAGE)
+    if(CLM_ENABLE_COVERAGE)
         include(cmake/Tests.cmake)
         clm_enable_coverage(clm_options)
     endif()
 
-    if(clm_ENABLE_HARDENING AND NOT clm_ENABLE_GLOBAL_HARDENING)
+    if(CLM_ENABLE_HARDENING AND NOT CLM_ENABLE_GLOBAL_HARDENING)
         include(cmake/Hardening.cmake)
 
         if(
-            NOT SUPPORTS_UBSAN
-            OR clm_ENABLE_SANITIZER_ADDRESS
-            OR clm_ENABLE_SANITIZER_LEAK
-            OR clm_ENABLE_SANITIZER_THREAD
-            OR clm_ENABLE_SANITIZER_UNDEFINED
+            NOT CLM_SUPPORTS_UBSAN
+            OR CLM_ENABLE_SANITIZER_ADDRESS
+            OR CLM_ENABLE_SANITIZER_LEAK
+            OR CLM_ENABLE_SANITIZER_THREAD
+            OR CLM_ENABLE_SANITIZER_UNDEFINED
         )
-            set(ENABLE_UBSAN_MINIMAL_RUNTIME FALSE)
+            set(CLM_ENABLE_UBSAN_MINIMAL_RUNTIME FALSE)
         else()
-            set(ENABLE_UBSAN_MINIMAL_RUNTIME TRUE)
+            set(CLM_ENABLE_UBSAN_MINIMAL_RUNTIME TRUE)
         endif()
 
-        clm_enable_hardening(clm_options OFF ${ENABLE_UBSAN_MINIMAL_RUNTIME})
+        clm_enable_hardening(clm_options OFF ${CLM_ENABLE_UBSAN_MINIMAL_RUNTIME})
     endif()
 endmacro()

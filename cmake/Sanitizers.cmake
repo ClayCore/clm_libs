@@ -1,91 +1,76 @@
-# ----------------------------------------------------------------------------------------------------- #
-# `Sanitizers.cmake`
-# Enables supported sanitizers
-# ----------------------------------------------------------------------------------------------------- #
-
 function(
     clm_enable_sanitizers
-    project_name
-    ENABLE_SANITIZER_ADDRESS
-    ENABLE_SANITIZER_LEAK
-    ENABLE_SANITIZER_UNDEFINED
-    ENABLE_SANITIZER_THREAD
-    ENABLE_SANITIZER_MEMORY
+    target
+    enable_sanitizer_address
+    enable_sanitizer_leak
+    enable_sanitizer_memory
+    enable_sanitizer_thread
+    enable_sanitizer_undefined
 )
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
-        set(SANITIZERS "")
+    if(CMAKE_CXX_COMPILER_ID MATCHES ".*GNU.*" OR CMAKE_CXX_COMPILER_ID MATCHES ".*Clang.*")
+        set(sanitizers "")
 
-        if(${ENABLE_SANITIZER_ADDRESS})
-            list(APPEND SANITIZERS "address")
+        if(${enable_sanitizer_address})
+            list(APPEND sanitizers "address")
         endif()
 
-        if(${ENABLE_SANITIZER_LEAK})
-            list(APPEND SANITIZERS "leak")
+        if(${enable_sanitizer_leak})
+            list(APPEND sanitizers "leak")
         endif()
 
-        if(${ENABLE_SANITIZER_UNDEFINED})
-            list(APPEND SANITIZERS "undefined")
+        if(${enable_sanitizer_undefined})
+            list(APPEND sanitizers "undefined")
         endif()
 
-        if(${ENABLE_SANITIZER_THREAD})
-            if("address" IN_LIST SANITIZERS OR "leak" IN_LIST SANITIZERS)
-                message(WARNING "** Thread sanitizer does not work with Address and Leak sanitizer enabled")
+        if(${enable_sanitizer_thread})
+            if("address" IN_LIST sanitizers OR "leak" IN_LIST sanitizers)
+                message(WARNING "!! Thread sanitizer does not work with address or leak sanitizers enabled")
             else()
-                list(APPEND SANITIZERS "thread")
+                list(APPEND sanitizers "thread")
             endif()
         endif()
 
-        if(${ENABLE_SANITIZER_MEMORY} AND CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
-            message(
-                WARNING
-                "** Memory sanitizer requires all the code (including libc++) to be MSan-instrumented otherwise it reports false positives"
-            )
+        if(${enable_sanitizer_memory} AND CMAKE_CXX_COMPILER_ID MATCHES ".*Clang.*")
+            message(WARNING "!! MSan requires all code (including libc++) to be MSan-instrumented.")
 
-            if(
-                "address" IN_LIST SANITIZERS
-                OR "thread" IN_LIST SANITIZERS
-                OR "leak" IN_LIST SANITIZERS
-            )
-                message(WARNING "** Memory sanitizer does not work with Address, Thread or Leak sanitizer enabled")
+            if("address" IN_LIST sanitizers OR "thread" IN_LIST sanitizers OR "leak" IN_LIST sanitizers)
+                message(WARNING "!! MSan does not work with address, leak or thread sanitizers enabled")
             else()
-                list(APPEND SANITIZERS "memory")
+                list(APPEND sanitizers "memory")
             endif()
         endif()
     elseif(MSVC)
-        if(${ENABLE_SANITIZER_ADDRESS})
-            list(APPEND SANITIZERS "address")
+        if(${enable_sanitizer_address})
+            list(APPEND sanitizers "address")
         endif()
 
         if(
-            ${ENABLE_SANITIZER_LEAK}
-            OR ${ENABLE_SANITIZER_UNDEFINED}
-            OR ${ENABLE_SANITIZER_THREAD}
-            OR ${ENABLE_SANITIZER_MEMORY}
+            ${enable_sanitizer_leak}
+            OR ${enable_sanitizer_memory}
+            OR ${enable_sanitizer_thread}
+            OR ${enable_sanitizer_undefined}
         )
-            message(WARNING "** MSVC only supports Address sanitizer")
+            message(WARNING "!! MSVC only supports address sanitizer")
         endif()
     endif()
 
-    list(JOIN SANITIZERS "," LIST_OF_SANITIZERS)
+    list(JOIN sanitizers "," sanitizer_list)
 
-    if(LIST_OF_SANITIZERS)
-        if(NOT "${LIST_OF_SANITIZERS}" STREQUAL "")
+    if(sanitizer_list)
+        if(NOT "${sanitizer_list}" STREQUAL "")
             if(NOT MSVC)
-                target_compile_options(${project_name} INTERFACE -fsanitize=${LIST_OF_SANITIZERS})
-                target_link_options(${project_name} INTERFACE -fsanitize=${LIST_OF_SANITIZERS})
+                target_compile_options(${target} INTERFACE -fsanitize=${sanitizer_list})
+                target_link_options(${target} INTERFACE -fsanitize=${sanitizer_list})
             else()
-                string(FIND "$ENV{PATH}" "$ENV{VSINSTALLDIR}" index_of_vs_install_dir)
+                string(FIND "$ENV${PATH}" "$ENV{VSINSTALLDIR}" index_of_vs_install_dir)
 
                 if("${index_of_vs_install_dir}" STREQUAL "-1")
-                    message(
-                        SEND_ERROR
-                        "** Using MSVC sanitizers requires setting the MSVC environment before building the project. Please manually open MSVC command prompt and rebuild the project"
-                    )
+                    message(SEND_ERROR ";; MSVC Sanitizers require MSVC environment. Execute 'vcvarsall.bat'")
                 endif()
 
-                target_compile_options(${project_name} INTERFACE /fsanitize=${LIST_OF_SANITIZERS} /Zi /INCREMENTAL:NO)
-                target_compile_definitions(${project_name} INTERFACE _DISABLE_VECTOR_ANNOTATION _DISABLE_STRING_ANNOTATION)
-                target_link_options(${project_name} INTERFACE /INCREMENTAL:NO)
+                target_compile_options(${target} INTERFACE /fsanitize=${sanitizer_list} /Zi /INCREMENTAL:NO)
+                target_compile_definitions(${target} INTERFACE _DISABLE_VECTOR_ANNOTATION _DISABLE_STRING_ANNOTATION)
+                target_link_options(${target} INTERFACE /INCREMENTAL:NO)
             endif()
         endif()
     endif()

@@ -1,13 +1,11 @@
-# ----------------------------------------------------------------------------------------------------- #
-# `StaticAnalyzers.cmake`
-# Allows converting the project into a proper package
-# ----------------------------------------------------------------------------------------------------- #
-
 function(clm_package_project)
+    include(FetchContent)
+
     cmake_policy(SET CMP0103 NEW)
-    set(_options ARCH_INDEPENDENT)
+
+    set(options ARCH_INDEPENDENT)
     set(
-        _oneValueArgs
+        one_value_args
         NAME
         COMPONENT
         VERSION
@@ -16,7 +14,7 @@ function(clm_package_project)
         CONFIG_INSTALL_DESTINATION
     )
     set(
-        _multiValueArgs
+        multi_value_args
         TARGETS
         PUBLIC_INCLUDES
         PUBLIC_DEPENDENCIES_CONFIGURED
@@ -27,17 +25,17 @@ function(clm_package_project)
 
     cmake_parse_arguments(
         _PackageProject
-        "${_options}"
-        "${_oneValueArgs}"
-        "${_multiValueArgs}"
+        "${options}"
+        "${one_value_args}"
+        "${multi_value_args}"
         "${ARGN}"
     )
 
     include(GNUInstallDirs)
 
     if(NOT _PackageProject_TARGETS)
-        get_all_installable_targets(_PackageProject_TARGETS)
-        message(STATUS "** package_project: considering ${_PackageProject_TARGETS} as the exported targets")
+        clm_get_all_installable_targets(_PackageProject_TARGETS)
+        message(STATUS "** PackageProject, using ${_PackageProject_TARGETS} as exported targets")
     endif()
 
     if("${_PackageProject_NAME}" STREQUAL "")
@@ -69,39 +67,39 @@ function(clm_package_project)
     set(_PackageProject_INSTALL_DESTINATION "${_PackageProject_CONFIG_INSTALL_DESTINATION}")
 
     if(NOT "${_PackageProject_PUBLIC_INCLUDES}" STREQUAL "")
-        foreach(_INC ${_PackageProject_PUBLIC_INCLUDES})
-            if(NOT IS_ABSOLUTE ${_INC})
-                set(_INC "${CMAKE_CURRENT_SOURCE_DIR}/${_INC}")
+        foreach(inc ${_PackageProject_PUBLIC_INCLUDES})
+            if(NOT IS_ABSOLUTE ${inc})
+                set(inc "${CMAKE_CURRENT_SOURCE_DIR}/${inc}")
             endif()
 
-            if(IS_DIRECTORY ${_INC})
-                install(DIRECTORY ${_INC} DESTINATION "./")
+            if(IS_DIRECTORY ${inc})
+                install(DIRECTORY ${inc} DESTINATION "./")
             else()
-                install(FILES ${_INC} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+                install(FILES ${inc} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
             endif()
         endforeach()
     endif()
 
-    if(NOT "${_PackageProject_PUBLIC_DEPENDENCIES}" STREQUAL "")
-        set(_PUBLIC_DEPENDENCIES_CONFIG)
+    if(NOT "${_PackageProject_PUBLIC_DEPENDENCIES_CONFIGURED}" STREQUAL "")
+        set(_public_dependencies_config)
 
-        foreach(DEP ${_PackageProject_PUBLIC_DEPENDENCIES_CONFIGURED})
-            list(APPEND _PUBLIC_DEPENDENCIES_CONFIG "${DEP} CONFIG")
+        foreach(dep ${_PackageProject_PUBLIC_DEPENDENCIES_CONIGURED})
+            list(APPEND _public_dependencies_config "${DEP} CONFIG")
         endforeach()
     endif()
 
-    list(APPEND _PackageProject_PUBLIC_DEPENDENCIES ${_PUBLIC_DEPENDENCIES_CONFIG})
+    list(APPEND _PackageProject_DEPENDENCIES ${_PackageProject_PUBLIC_DEPENDENCIES})
     set(_PackageProject_DEPENDENCIES ${_PackageProject_PUBLIC_DEPENDENCIES})
 
     if(NOT "${_PackageProject_PRIVATE_DEPENDENCIES_CONFIGURED}" STREQUAL "")
-        set(_PRIVATE_DEPENDENCIES_CONFIG)
+        set(_private_dependencies_config)
 
-        foreach(DEP ${_PackageProject_PRIVATE_DEPENDENCIES_CONFIGURED})
-            list(APPEND _PRIVATE_DEPENDENCIES_CONFIG "${DEP} CONFIG")
+        foreach(dep ${_PackageProject_PRIVATE_DEPENDENCIES_CONIGURED})
+            list(APPEND _private_dependencies_config "${DEP} CONFIG")
         endforeach()
     endif()
 
-    list(APPEND _PackageProject_PRIVATE_DEPENDENCIES ${_PRIVATE_DEPENDENCIES_CONFIG})
+    list(APPEND _PackageProject_DEPENDENCIES ${_PackageProject_PRIVATE_DEPENDENCIES})
 
     install(
         TARGETS ${_PackageProject_TARGETS}
@@ -121,21 +119,20 @@ function(clm_package_project)
     set(
         USAGE_FILE_CONTENT
         "
-            The package ${_PackageProject_NAME} provides CMake targets:
+        The package ${_PackageProject_NAME} provides the following CMake targets:
 
-            find_package(${_PackageProject_NAME} CONFIG REQUIRED)
-            target_link_libraries(main PRIVATE ${_targets_str})
+        find_package(${_PackageProject_NAME} CONFIG REQUIRED)
+        target_link_libraries(main PRIVATE ${_targets_str})
         "
     )
-    install(CODE "MESSAGE(STATUS \"${USAGE_FILE_CONTENT})")
+    install(CODE "MESSAGE(STATUS \"${USAGE_FILE_CONTENT}\")")
     file(WRITE "${_PackageProject_EXPORT_DESTINATION}/usage" "${USAGE_FILE_CONTENT}")
     install(FILES "${_PackageProject_EXPORT_DESTINATION}/usage" DESTINATION "${_PackageProject_CONFIG_INSTALL_DESTINATION}")
     unset(_PackageProject_TARGETS)
 
     FetchContent_Declare(
         _fargs
-        URL
-        https://github.com/polysquare/cmake-forward-arguments/archive/8c50d1f956172edb34e95efa52a2d5cb1f686ed2.zip
+        URL https://github.com/polysquare/cmake-forward-arguments/archive/8c50d1f956172edb34e95efa52a2d5cb1f686ed2.zip
     )
     FetchContent_GetProperties(_fargs)
 
@@ -150,11 +147,11 @@ function(clm_package_project)
         _PackageProject
         _FARGS_LIST
         OPTION_ARGS
-        "${_options};"
+        "${options};"
         SINGLEVAR_ARGS
-        "${_oneValueArgs};EXPORT_DESTINATION;INSTALL_DESTINATION;NAMESPACE;VARS_PERFIX;EXPORT"
+        "${one_value_args};EXPORT_DESTINATION;INSTALL_DESTINATION;NAMESPACE;VARS_PREFIX;EXPORT"
         MULTIVAR_ARGS
-        "${_multiValueArgs};DEPENDENCIES;PRIVATE_DEPENDENCIES"
+        "${multi_value_args};DEPENDENCIES;PRIVATE_DEPENDENCIES"
     )
 
     FetchContent_Declare(_ycm URL https://github.com/robotology/ycm/archive/refs/tags/v0.13.0.zip)

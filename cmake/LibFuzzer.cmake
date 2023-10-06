@@ -1,17 +1,12 @@
-# ----------------------------------------------------------------------------------------------------- #
-# `LibFuzzer.cmake`
-# Check for LLVM LibFuzzer support
-# ----------------------------------------------------------------------------------------------------- #
-
-function(clm_check_libfuzzer_support var_name)
+function(clm_check_libfuzzer_support result)
     set(
-        LibFuzzerTestSource
+        libfuzzer_test_source
         "
-            #include <cstdint>
+        #include <cstdint>
 
-            extern \"C\" int LLVMFuzzerTestOneInput(const std::uint8_t *data, std::size_t size) {
-                return 0;
-            }
+        extern \"C\" int LLVMFuzzerTestOneInput(const std::uint8_t *data, std::size_t size) {
+            return 0;
+        }
         "
     )
 
@@ -20,5 +15,5 @@ function(clm_check_libfuzzer_support var_name)
     set(CMAKE_REQUIRED_FLAGS "-fsanitize=fuzzer")
     set(CMAKE_REQUIRED_LINK_OPTIONS "-fsanitize=fuzzer")
 
-    check_cxx_source_compiles("${LibFuzzerTestSource}" ${var_name})
+    check_cxx_source_compiles("${libfuzzer_test_source}" ${result})
 endfunction()

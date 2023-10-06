@@ -1,11 +1,6 @@
-# ----------------------------------------------------------------------------------------------------- #
-# `Tests.cmake`
-# Add compile options for coverage with tests
-# ----------------------------------------------------------------------------------------------------- #
-
-function(clm_enable_coverage project_name)
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
-        target_compile_options(${project_name} INTERFACE --coverage -O0 -g)
-        target_link_libraries(${project_name} INTERFACE --coverage)
+function(clm_enable_coverage target)
+    if(CMAKE_CXX_COMPILER_ID MATCHES ".*GNU.*" OR CMAKE_CXX_COMPILER_ID MATCHES ".*Clang.*")
+        target_compile_options($target INTERFACE --coverage -O0 -g)
+        target_link_libraries($target INTERFACE --coverage)
     endif()
 endfunction()

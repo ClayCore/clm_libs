@@ -1,24 +1,16 @@
-# ----------------------------------------------------------------------------------------------------- #
-# `SystemLink.cmake`
-# Allows inclusions of system directories while supressing various warnings
-# Also permits linkage against multiple targets and libraries as system libraries
-# ----------------------------------------------------------------------------------------------------- #
-
-# Include system directory
-function(target_include_system_directories target)
-    set(multiValueArgs INTERFACE PUBLIC PRIVATE)
+function(clm_target_include_system_dirs target)
+    set(multi_value_args INTERFACE PUBLIC PRIVATE)
     cmake_parse_arguments(
-        ARG
+        arg
         ""
         ""
-        "${multiValueArgs}"
+        "${multi_value_args}"
         ${ARGN}
     )
 
-    foreach(scope in ITEMS INTERFACE PUBLIC PRIVATE)
-        foreach(lib_include_dirs IN LISTS ARG_${scope})
+    foreach(scope IN ITEMS INTERFACE PUBLIC PRIVATE)
+        foreach(lib IN LISTS arg_${scope})
             if(NOT MSVC)
-                # system includes do not work in MSVC
                 set(_SYSTEM SYSTEM)
             endif()
 
@@ -27,7 +19,7 @@ function(target_include_system_directories target)
                     ${target}
                     ${_SYSTEM}
                     ${scope}
-                    "$<BUILD_INTERFACE:${lib_include_dirs}>"
+                    "$<BUILD_INTERFACE:${lib}>"
                     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
                 )
             else()
@@ -35,56 +27,43 @@ function(target_include_system_directories target)
                     ${target}
                     ${_SYSTEM}
                     ${scope}
-                    ${lib_include_dirs}
+                    ${lib}
                 )
             endif()
         endforeach()
     endforeach()
 endfunction()
 
-# Include directories of a library target as system dirs
-function(
-    target_include_system_library
-    target
-    scope
-    lib
-)
+function(clm_target_include_sys_lib target scope lib)
     if(TARGET ${lib})
         get_target_property(lib_include_dirs ${lib} INTERFACE_INCLUDE_DIRECTORIES)
 
         if(lib_include_dirs)
-            target_include_system_directories(${target} ${scope} ${lib_include_dirs})
+            clm_target_include_system_dirs(${target} ${scope} ${lib_include_dirs})
         else()
-            message(TRACE "${lib} library does not have the INTERFACE_INCLUDE_DIRECTORIES property.")
+            message(WARNING "!! ${lib} library does not have INTERFACE_INCLUDE_DIRECTORIES property")
         endif()
     endif()
 endfunction()
 
-# Link a library target as a system library
-function(
-    target_link_system_library
-    target
-    scope
-    lib
-)
-    target_include_system_library(${target} ${scope} ${lib})
+function(clm_target_link_sys_lib target scope lib)
+    clm_target_include_sys_lib(${target} ${scope} ${lib})
     target_link_libraries(${target} ${scope} ${lib})
 endfunction()
 
-# Link multiple library targets as system libraries
-function(target_link_system_libraries target)
-    set(multiValueArgs INTERFACE PUBLIC PRIVATE)
+function(clm_target_link_sys_libs target)
+    set(multi_value_args INTERFACE PUBLIC PRIVATE)
     cmake_parse_arguments(
-        ARG
+        arg
         ""
         ""
-        "${multiValueArgs}"
+        "${multi_value_args}"
         ${ARGN}
     )
 
-    foreach(scope in ITEMS INTERFACE PUBLIC PRIVATE)
-        foreach(lib in LISTS ARG_${scope})
-            target_link_system_library(${target} ${scope} ${lib})
+    foreach(scope IN ITEMS INTERFACE PUBLIC PRIVATE)
+        foreach(lib IN LISTS arg_${scope})
+            clm_target_include_sys_lib(${target} ${scope} ${lib})
         endforeach()
     endforeach()
 endfunction()
