@@ -1,0 +1,34 @@
+{
+    "clangd.arguments": ["--background-index", "--compile-commands-dir=build"],
+    "files.associations": {
+        "*.h": "c"
+    },
+    "[cmake]": {
+        "editor.quickSuggestions": {
+            "other": "on",
+            "comments": "on",
+            "strings": "on"
+        },
+        "editor.guides.indentation": true,
+        "editor.lineNumbers": "relative",
+        "editor.minimap.enabled": true,
+        "editor.minimap.renderCharacters": false,
+        "editor.rulers": [120]
+    },
+    "cmake.configureOnOpen": false,
+
+    "[c]": {
+        "editor.quickSuggestions": {
+            "other": "on",
+            "comments": "on",
+            "strings": "on"
+        }
+    },
+    "[cpp]": {
+        "editor.quickSuggestions": {
+            "other": "on",
+            "comments": "on",
+            "strings": "on"
+        }
+    }
+}
