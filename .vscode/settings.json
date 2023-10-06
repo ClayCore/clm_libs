@@ -22,13 +22,15 @@
             "other": "on",
             "comments": "on",
             "strings": "on"
-        }
+        },
+        "editor.rulers": [90]
     },
     "[cpp]": {
         "editor.quickSuggestions": {
             "other": "on",
             "comments": "on",
             "strings": "on"
-        }
+        },
+        "editor.rulers": [90]
     }
 }
