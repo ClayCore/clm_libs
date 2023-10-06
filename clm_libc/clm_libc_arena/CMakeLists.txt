@@ -14,6 +14,7 @@ add_library(clm::clm_libc_arena ALIAS clm_libc_arena)
 
 target_sources(
     clm_libc_arena
+    PRIVATE
     src/arena.c
 )
 target_link_libraries(

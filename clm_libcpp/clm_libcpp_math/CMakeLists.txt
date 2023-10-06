@@ -6,6 +6,7 @@ add_library(clm::clm_libcpp_math ALIAS clm_libcpp_math)
 
 target_sources(
     clm_libcpp_math
+    INTERFACE
     include/math.hpp
 )
 target_link_libraries(

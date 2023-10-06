@@ -14,6 +14,7 @@ add_library(clm::clm_libc_string ALIAS clm_libc_string)
 
 target_sources(
     clm_libc_string
+    PRIVATE
     src/string.c
 )
 target_link_libraries(
