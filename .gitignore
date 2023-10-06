@@ -1,5 +1,4 @@
-**/.vscode
-**/target
+**/build
 **/install
 
 desktop.ini
