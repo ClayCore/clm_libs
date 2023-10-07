@@ -1,0 +1,38 @@
+\section{Building}
+
+\subsection*{Prerequisites}
+
+\noindent The following is a list of requirements to build and use the libraries:
+\begin{itemize}
+    \item C (c17) and C++ (c++20) compiler,
+    \item CMake 3.27
+    \item GNU Make (optional)
+    \item clang-tidy (optional)
+    \item cppcheck (optional)
+\end{itemize}
+\noindent Supported compilers:
+\begin{itemize}
+    \item gcc (mingw and msys2 are supported for Windows\texttrademark)
+    \item clang (llvm and clang-cl is supported)
+    \item cl.exe (msvc)
+\end{itemize}
+
+\subsection*{Preparing the build}
+
+This project uses CMake and supplies a list of presets. The most straightforward way to build the project is by using the provided Makefile and invoking it as follows:
+\begin{Verbatim}[commandchars=\\\{\}]
+    $ \textbf{\textcolor{green!50!black}{make}} prepare
+\end{Verbatim}
+
+\noindent Note that configuring and generating recipes using CMake directly -- without using the provided Makefiles -- will not use the supplied configuration options. If you wish to replicate it, you may want to use the following options:
+\begin{itemize}
+    \item \verb|-DCMAKE_BUILD_TYPE=Release|
+    \item \verb|-DCLM_WARNINGS_AS_ERRORS=OFF|
+\end{itemize}
+
+\subsection*{Building using CMake}
+
+If you used the previously mentioned \texttt{make} command, you can simply invoke it with the \texttt{build} recipe as follows:
+\begin{Verbatim}[commandchars=\\\{\}]
+    $ \textbf{\textcolor{green!50!black}{make}} build
+\end{Verbatim}
