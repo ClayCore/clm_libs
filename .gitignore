@@ -12,6 +12,10 @@
 
 # Auto-generated docs
 /docs/auto
+/docs/latex/out/*
+
+# Auto-generated logs
+*.log
 
 # Windows artifacts
 desktop.ini
