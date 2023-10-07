@@ -3,7 +3,7 @@
 BUILDDIR := build
 
 prepare: | $(BUILDDIR)
-	cmake -S . -B $(BUILDDIR) -G "Ninja" -DCMAKE_BUILD_TYPE=Release
+	cmake -S . -B $(BUILDDIR) -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCLM_WARNINGS_AS_ERRORS=OFF
 
 build: | $(BUILDDIR)
 	cmake --build $(BUILDDIR) --config Release
