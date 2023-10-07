@@ -1,3 +1,5 @@
+include(GenerateExportHeader)
+
 add_library(
     clm_libcpp_math
     INTERFACE
@@ -31,3 +33,13 @@ set_target_properties(
     CXX_VISIBILITY_PRESET hidden
     VISIBILITY_INLINES_HIDDEN YES
 )
+
+generate_export_header(
+    clm_libcpp_math
+    EXPORT_FILE_NAME
+    ${PROJECT_BINARY_DIR}/clm_libcpp/clm_libcpp_math/include/clm_libcpp_math_export.hpp
+)
+
+if(NOT BUILD_SHARED_LIBS)
+    target_compile_definitions(clm_libcpp_math INTERFACE CLM_LIBCPP_MATH_STATIC)
+endif()
