@@ -1,5 +1,17 @@
-**/build
-**/install
+# Build files
+/build
+
+# Target libs
+/target
+
+# Install files
+/install
+
+# Local clangd cache
 /.cache
 
+# Auto-generated docs
+/docs/auto
+
+# Windows artifacts
 desktop.ini
