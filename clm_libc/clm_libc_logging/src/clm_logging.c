@@ -108,8 +108,8 @@ static void clm_file_callback(clm_log_record *record)
 static void clm_init_record(clm_log_record *record, void *data)
 {
     if (!record->time) {
-        time_t tm   = time(NULL);
-        errno_t err = localtime_s(record->time, &tm);
+        time_t tm = time(NULL);
+        i32 err   = localtime_s(record->time, &tm);
         if (!err) {
             fprintf(stderr, "clm_init_record: localtime_s returned null\n");
             exit(EXIT_FAILURE);
