@@ -123,6 +123,8 @@ macro(clm_setup_options)
     endif()
 
     option(CLM_BUILD_FUZZ_TESTS "Enable fuzz testing executable" ${CLM_DEFAULT_FUZZER})
+
+    option(BUILD_SHARED_LIBS "Build shared libs" OFF)
 endmacro()
 
 macro(clm_global_options)
