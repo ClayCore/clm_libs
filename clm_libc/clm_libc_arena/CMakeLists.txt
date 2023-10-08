@@ -1,17 +1,6 @@
 include(GenerateExportHeader)
 
-if(NOT DEFINED CLM_BUILD_LIB_TYPE)
-    if(BUILD_SHARED_LIBS)
-        set(CLM_BUILD_LIB_TYPE SHARED)
-    else()
-        set(CLM_BUILD_LIB_TYPE STATIC)
-    endif()
-endif()
-
-add_library(
-    clm_libc_arena
-    ${CLM_BUILD_LIB_TYPE}
-)
+add_library(clm_libc_arena)
 add_library(clm::clm_libc_arena ALIAS clm_libc_arena)
 
 target_sources(
@@ -30,9 +19,7 @@ target_include_directories(
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/clm_libc/clm_libc_shared/include>
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/clm_libc/clm_libc_arena/include>
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/clm_libc/clm_libc_arena/src>
-    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/clm_libc/clm_libc_shared/include>
     $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/clm_libc/clm_libc_arena/include>
-    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/clm_libc/clm_libc_arena/src>
 )
 target_compile_features(clm_libc_arena PRIVATE c_std_17)
 
@@ -51,7 +38,7 @@ generate_export_header(
 )
 
 if(NOT BUILD_SHARED_LIBS)
-    target_compile_definitions(clm_libc_arena PUBLIC CLM_LIBC_ARENA_STATIC)
+    target_compile_definitions(clm_libc_arena PUBLIC CLM_LIBC_ARENA_STATIC_DEFINE)
 endif()
 
 add_custom_command(
