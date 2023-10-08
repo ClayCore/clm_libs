@@ -19,7 +19,6 @@ target_include_directories(
     INTERFACE
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/clm_libcpp/clm_libcpp_shared/include>
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/clm_libcpp/clm_libcpp_math/include>
-    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/clm_libcpp/clm_libcpp_shared/include>
     $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/clm_libcpp/clm_libcpp_math/include>
 )
 target_compile_features(clm_libcpp_math INTERFACE cxx_std_20)
