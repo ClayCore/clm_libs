@@ -2,39 +2,38 @@
 #define CLM_LIBC_SHARED_GUARD
 
 #include <math.h>
-#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
-#ifndef CLM_TYPEDEFS
-#define CLM_TYPEDEFS(CLM_TYPEDEF)   \
-    CLM_TYPEDEF(uint8_t, u8)        \
-    CLM_TYPEDEF(uint16_t, u16)      \
-    CLM_TYPEDEF(uint32_t, u32)      \
-    CLM_TYPEDEF(uint64_t, u64)      \
-    CLM_TYPEDEF(int8_t, i8)         \
-    CLM_TYPEDEF(int16_t, i16)       \
-    CLM_TYPEDEF(int32_t, i32)       \
-    CLM_TYPEDEF(int64_t, i64)       \
-    CLM_TYPEDEF(uint8_t, byte)      \
-    CLM_TYPEDEF(uintptr_t, usize)   \
-    CLM_TYPEDEF(intptr_t, isize)    \
-    CLM_TYPEDEF(uintptr_t, uptr)    \
-    CLM_TYPEDEF(intptr_t, iptr)     \
-    CLM_TYPEDEF(ptrdiff_t, ptrdiff) \
-    CLM_TYPEDEF(float_t, f32)       \
-    CLM_TYPEDEF(double_t, f64)      \
-    CLM_TYPEDEF(long double, f128)
-#endif /* CLM_TYPEDEFS */
+#define FALSE       (0U)
+#define TRUE        (1U)
+#define SIZE_OF(x)  ((usize)(sizeof(x)))
+#define ALIGN_OF(x) ((usize)(_Alignof(x)))
+#define COUNT_OF(x) ((sizeof(x)) / (sizeof(*(x))))
+#define ASSERT(c) \
+    while (!(c)) __builtin_unreachable()
 
-#ifndef CLM_TYPEDEF
-#define CLM_TYPEDEF(ty, alias) typedef ty alias;
+typedef uint8_t u8;
+typedef uint16_t u16;
+typedef uint32_t u32;
+typedef uint64_t u64;
 
-#endif /* CLM_TYPEDEF */
+typedef int8_t i8;
+typedef int16_t i16;
+typedef int32_t i32;
+typedef int64_t i64;
 
-CLM_TYPEDEFS(CLM_TYPEDEF)
+typedef uint_fast32_t b32;
+typedef uint8_t byte;
 
-#undef CLM_TYPEDEFS
-#undef CLM_TYPEDEF
+typedef float_t f32;
+typedef double_t f64;
+typedef long double f128;
+
+typedef uintptr_t uptr;
+typedef intptr_t iptr;
+
+typedef uintptr_t usize;
+typedef ptrdiff_t isize;
 
 #endif /* CLM_LIBC_SHARED_GUARD */
