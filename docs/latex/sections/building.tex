@@ -2,15 +2,15 @@
 
 \subsection*{Prerequisites}
 
-\noindent The following is a list of requirements to build and use the libraries:
+The following is a list of requirements to build and use the libraries:
 \begin{itemize}
-    \item C (c17) and C++ (c++20) compiler,
+    \item C (c17) and C++ (cpp20) compiler,
     \item CMake 3.27
     \item GNU Make (optional)
     \item clang-tidy (optional)
     \item cppcheck (optional)
 \end{itemize}
-\noindent Supported compilers:
+Supported compilers:
 \begin{itemize}
     \item gcc (mingw and msys2 are supported for Windows\texttrademark)
     \item clang (llvm and clang-cl is supported)
@@ -24,11 +24,19 @@ This project uses CMake and supplies a list of presets. The most straightforward
     $ \textbf{\textcolor{green!50!black}{make}} prepare
 \end{Verbatim}
 
-\noindent Note that configuring and generating recipes using CMake directly -- without using the provided Makefiles -- will not use the supplied configuration options. If you wish to replicate it, you may want to use the following options:
+Note that configuring and generating recipes using CMake directly -- without using the provided Makefiles -- will not use the supplied configuration options. If you wish to replicate it, you may want to use the following options:
 \begin{itemize}
-    \item \verb|-DCMAKE_BUILD_TYPE=Release|
-    \item \verb|-DCLM_WARNINGS_AS_ERRORS=OFF|
+    \item \textbf{\texttt{-DCMAKE\textunderscore BUILD\textunderscore TYPE=\textcolor{blue!80!black}{Release}}}
+    \item \textbf{\texttt{-DBUILD\textunderscore SHARED\textunderscore LIBS=\textcolor{blue!80!black}{ON}}}
+    \item \textbf{\texttt{-DCLM\textunderscore WARNINGS\textunderscore AS\textunderscore ERRORS=\textcolor{blue!80!black}{OFF}}}
 \end{itemize}
+
+The above set of options is described as such:
+\begin{description}[style=nextline]
+    \item[\texttt{-DCMAKE\textunderscore BUILD\textunderscore TYPE}] \hfill Describes the build type -- valid values are: \textbf{Release}, \textbf{MinSizeRel}, \\ \textbf{Debug} and \textbf{RelWithDebInfo}; \textbf{RelWithDebInfo} is the default
+    \item[\texttt{-DBUILD\textunderscore SHARED\textunderscore LIBS}] \hfill Set to \textbf{ON} if you want to build shared objects (dynamic link libraries on Windows\texttrademark) or \textbf{OFF} if you prefer static libraries
+    \item[\texttt{-DCLM\textunderscore WARNINGS\textunderscore AS\textunderscore ERRORS}] \hfill Set to \textbf{ON} if you with the build process to be interrupted by \emph{any} warning or \textbf{OFF} if you desire to stop only on fatal error occurences
+\end{description}
 
 \subsection*{Building using CMake}
 
