@@ -23,18 +23,18 @@ static struct
     void *data;
     clm_log_lockfn lock;
     i32 level;
-    bool quiet;
+    b32 quiet;
     callback_t callbacks[CLM_LOG_MAX_CALLBACKS];
 } CLM_LOGGER;
 
 // clang-format off
-char static const *clm_log_strings[] = {
+char static const *CLM_LOG_LEVELS[] = {
     "TRACE", "DEBUG", "INFO", "WARN", "ERROR"
 };
 // clang-format on
 
 // clang-format off
-char static const *clm_log_colors[] = {
+char static const *CLM_LOG_COLORS[] = {
     "\x1b[94m", "\x1b[36m", "\x1b[32m", "\x1b[33m", "\x1b[31m"
 };
 // clang-format on
@@ -50,14 +50,14 @@ char static const *clm_log_colors[] = {
 static void clm_log_lock(void)
 {
     if (CLM_LOGGER.lock) {
-        CLM_LOGGER.lock(true, CLM_LOGGER.data);
+        CLM_LOGGER.lock(TRUE, CLM_LOGGER.data);
     }
 }
 
 static void clm_log_unlock(void)
 {
     if (CLM_LOGGER.lock) {
-        CLM_LOGGER.lock(false, CLM_LOGGER.data);
+        CLM_LOGGER.lock(FALSE, CLM_LOGGER.data);
     }
 }
 
@@ -69,18 +69,18 @@ static void clm_stdout_callback(clm_log_record *record)
 
     // clang-format off
     fprintf(
-        record->data,
+        record->stream,
         "%s %s%-5s\x1b[0m \x1b[90m%s:%d:\x1b[0m ",
         buf,
-        clm_log_colors[record->level],
-        clm_log_strings[record->level],
+        CLM_LOG_COLORS[record->level],
+        CLM_LOG_LEVELS[record->level],
         record->file, record->line
     );
     // clang-format on
 
-    vfprintf(record->data, record->fmt, record->ap);
-    fprintf(record->data, "\n");
-    fflush(record->data);
+    vfprintf(record->stream, record->fmt, record->ap);
+    fprintf(record->stream, "\n");
+    fflush(record->stream);
 }
 
 static void clm_file_callback(clm_log_record *record)
@@ -91,32 +91,28 @@ static void clm_file_callback(clm_log_record *record)
 
     // clang-format off
     fprintf(
-        record->data,
+        record->stream,
         "%s %-5s %s:%d: ",
         buf,
-        clm_log_strings[record->level],
+        CLM_LOG_LEVELS[record->level],
         record->file,
         record->line
     );
     // clang-format on
 
-    vfprintf(record->data, record->fmt, record->ap);
-    fprintf(record->data, "\n");
-    fflush(record->data);
+    vfprintf(record->stream, record->fmt, record->ap);
+    fprintf(record->stream, "\n");
+    fflush(record->stream);
 }
 
-static void clm_init_record(clm_log_record *record, void *data)
+static void clm_init_record(clm_log_record *record, void *stream)
 {
     if (!record->time) {
-        time_t tm = time(NULL);
-        i32 err   = localtime_s(record->time, &tm);
-        if (!err) {
-            fprintf(stderr, "clm_init_record: localtime_s returned null\n");
-            exit(EXIT_FAILURE);
-        }
-
-        record->data = data;
+        time_t tm    = time(NULL);
+        record->time = localtime(&tm);
     }
+
+    record->stream = stream;
 }
 
 /*****************************************************************************************
@@ -127,9 +123,9 @@ static void clm_init_record(clm_log_record *record, void *data)
  * IMPLEMENTATION BEGIN
  ****************************************************************************************/
 
-char const *clm_log_level_string(i32 level)
+char *clm_log_level_string(i32 level)
 {
-    return (clm_log_strings[level]);
+    return (CLM_LOG_LEVELS[level]);
 }
 
 
@@ -146,7 +142,7 @@ void clm_log_set_level(i32 level)
 }
 
 
-void clm_log_set_quiet(bool enable)
+void clm_log_set_quiet(b32 enable)
 {
     CLM_LOGGER.quiet = enable;
 }
@@ -171,7 +167,7 @@ i32 clm_log_add_fp(FILE *fp, i32 level)
 }
 
 
-void clm_log(i32 level, char const *file, i32 line, char const *fmt, ...)
+void clm_log(i32 level, char *file, i32 line, char *fmt, ...)
 {
     // clang-format off
     clm_log_record record = {

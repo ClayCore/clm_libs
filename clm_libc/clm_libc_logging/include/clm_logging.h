@@ -23,16 +23,16 @@ typedef struct clm_log_record_t clm_log_record;
 struct clm_log_record_t
 {
     va_list ap;
-    char const *fmt;
-    char const *file;
+    char *fmt;
+    char *file;
     struct tm *time;
-    void *data;
+    void *stream;
     i32 line;
     i32 level;
 };
 
 typedef void (*clm_log_logfn)(clm_log_record *);
-typedef void (*clm_log_lockfn)(bool, void *);
+typedef void (*clm_log_lockfn)(b32, void *);
 
 enum
 {
@@ -44,13 +44,13 @@ enum
 };
 
 
-CLM_LIBC_LOGGING_EXPORT char const *clm_log_level_string(i32);
+CLM_LIBC_LOGGING_EXPORT char *clm_log_level_string(i32);
 CLM_LIBC_LOGGING_EXPORT void clm_log_set_lock(clm_log_lockfn, void *);
 CLM_LIBC_LOGGING_EXPORT void clm_log_set_level(i32);
-CLM_LIBC_LOGGING_EXPORT void clm_log_set_quiet(bool);
+CLM_LIBC_LOGGING_EXPORT void clm_log_set_quiet(b32);
 CLM_LIBC_LOGGING_EXPORT i32 clm_log_add_callback(clm_log_logfn, void *, i32);
 CLM_LIBC_LOGGING_EXPORT i32 clm_log_add_fp(FILE *, i32);
 
-void clm_log(i32, char const *, i32, char const *, ...);
+void clm_log(i32, char *, i32, char *, ...);
 
 #endif /* CLM_LIBC_LOGGING_GUARD */

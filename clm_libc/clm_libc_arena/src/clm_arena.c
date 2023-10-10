@@ -8,7 +8,7 @@
 
 clm_memregion_t *clm_memregion_new(usize capacity)
 {
-    usize total             = sizeof(clm_memregion_t) + sizeof(uptr) * capacity;
+    usize total             = SIZE_OF(clm_memregion_t) + SIZE_OF(uptr) * capacity;
     clm_memregion_t *region = calloc(1, total);
     // TODO: check if region is null
     region->capacity = capacity;
@@ -25,12 +25,12 @@ void clm_memregion_release(clm_memregion_t *region)
 void *clm_arena_alloc(clm_arena_t *arena, usize size)
 {
     usize current_cap = size;
-    usize total_size  = (size + sizeof(uptr) - 1) / sizeof(uptr);
+    usize total_size  = (size + SIZE_OF(uptr) - 1) / SIZE_OF(uptr);
     usize capacity    = CLM_ARENA_DEFAULT_CAP;
 
     void *mem = NULL;
 
-    if (arena->end == NULL) {
+    if (!arena->end) {
         if (capacity < total_size) {
             capacity = total_size;
         }
@@ -62,17 +62,19 @@ void *clm_arena_alloc(clm_arena_t *arena, usize size)
 
 void *clm_arena_realloc(clm_arena_t *arena, void *ptr, usize old_size, usize new_size)
 {
-    void *new_ptr     = NULL;
-    u8 *new_ptr_bytes = NULL;
-    u8 *old_ptr_bytes = NULL;
+    void *new_ptr       = NULL;
+    byte *new_ptr_bytes = NULL;
+    byte *old_ptr_bytes = NULL;
 
     if (new_size <= old_size) {
         return (ptr);
     }
 
-    new_ptr       = clm_arena_alloc(arena, new_size);
-    new_ptr_bytes = new_ptr;
-    old_ptr_bytes = ptr;
+    new_ptr = clm_arena_alloc(arena, new_size);
+    ASSERT(new_ptr);
+
+    new_ptr_bytes = (byte *)(new_ptr);
+    old_ptr_bytes = (byte *)(ptr);
 
     for (usize i = 0; i < old_size; ++i) {
         new_ptr_bytes[i] = old_ptr_bytes[i];
@@ -85,7 +87,7 @@ void clm_arena_reset(clm_arena_t *arena)
 {
     clm_memregion_t *region = NULL;
 
-    for (region = arena->begin; region != NULL; region = region->next) {
+    for (region = arena->begin; region; region = region->next) {
         region->count = 0;
     }
 
@@ -94,9 +96,11 @@ void clm_arena_reset(clm_arena_t *arena)
 
 void clm_arena_release(clm_arena_t *arena)
 {
-    clm_memregion_t *region = NULL;
+    clm_memregion_t *region = arena->begin;
+    clm_memregion_t *treg   = region;
+
     while (region) {
-        clm_memregion_t *treg = region;
+        treg = region;
 
         region = region->next;
         clm_memregion_release(treg);
