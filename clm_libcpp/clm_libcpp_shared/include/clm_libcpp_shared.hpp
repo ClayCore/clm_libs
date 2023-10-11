@@ -5,25 +5,27 @@
 #include <cstddef>
 #include <cstdint>
 
-typedef std::uint8_t u8;
-typedef std::uint16_t u16;
-typedef std::uint32_t u32;
-typedef std::uint64_t u64;
+using u8  = std::uint8_t;
+using u16 = std::uint16_t;
+using u32 = std::uint32_t;
+using u64 = std::uint64_t;
 
-typedef std::int8_t i8;
-typedef std::int16_t i16;
-typedef std::int32_t i32;
-typedef std::int64_t i64;
+using i8  = std::int8_t;
+using i16 = std::int16_t;
+using i32 = std::int32_t;
+using i64 = std::int64_t;
 
-typedef std::uintptr_t usize;
-typedef std::intptr_t isize;
+using byte = std::uint8_t;
+using b32  = std::uint_fast32_t;
 
-typedef usize uptr;
-typedef isize iptr;
-typedef std::ptrdiff_t ptrdiff;
+using uptr = std::uintptr_t;
+using iptr = std::intptr_t;
 
-typedef std::float_t f32;
-typedef std::double_t f64;
-typedef long double f128;
+using usize = std::uintptr_t;
+using isize = std::ptrdiff_t;
+
+using f32  = std::float_t;
+using f64  = std::double_t;
+using f128 = long double;
 
 #endif /* CLM_LIBCPP_SHARED_GUARD */
