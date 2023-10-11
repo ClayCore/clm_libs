@@ -1,6 +1,7 @@
 add_subdirectory(clm_libc_arena)
 add_subdirectory(clm_libc_logging)
 add_subdirectory(clm_libc_string)
+add_subdirectory(clm_libc_vector)
 
 # add_library(
 # clm_libc
