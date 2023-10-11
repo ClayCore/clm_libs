@@ -33,8 +33,8 @@ CLM_LIBC_STRING_EXPORT void clm_string_init(clm_string *, u8 const *, usize);
 CLM_LIBC_STRING_EXPORT u64 clm_string_raw_hash(u8 const *, usize);
 CLM_LIBC_STRING_EXPORT u64 clm_string_hash(clm_string *);
 
-CLM_LIBC_STRING_EXPORT bool clm_string_eq(clm_string *, clm_string *);
-CLM_LIBC_STRING_EXPORT bool clm_string_eq_icase(clm_string *, clm_string *);
+CLM_LIBC_STRING_EXPORT b32 clm_string_eq(clm_string *, clm_string *);
+CLM_LIBC_STRING_EXPORT b32 clm_string_eq_icase(clm_string *, clm_string *);
 
 CLM_LIBC_STRING_EXPORT isize clm_string_find(clm_string *, u8);
 CLM_LIBC_STRING_EXPORT isize clm_string_find_rev(clm_string *, u8);

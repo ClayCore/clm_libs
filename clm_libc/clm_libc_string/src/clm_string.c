@@ -12,8 +12,8 @@
  * STATICS AND CONSTANTS BEGIN
  ****************************************************************************************/
 
-static clm_arena_t CLM_STRING_ARENA   = { 0 };
-static clm_arena_t *CLM_CONTEXT_ARENA = &CLM_STRING_ARENA;
+static arena CLM_STRING_ARENA   = { 0 };
+static arena *CLM_CONTEXT_ARENA = &CLM_STRING_ARENA;
 
 void static *clm_alloc(usize size)
 {
@@ -217,7 +217,7 @@ u64 clm_string_hash(clm_string *str)
     return (res);
 }
 
-bool clm_string_eq(clm_string *lhs, clm_string *rhs)
+b32 clm_string_eq(clm_string *lhs, clm_string *rhs)
 {
     u64 lhash = 0, rhash = 0;
 
@@ -247,7 +247,7 @@ bool clm_string_eq(clm_string *lhs, clm_string *rhs)
     return (lhash == rhash);
 }
 
-bool clm_string_eq_icase(clm_string *lhs, clm_string *rhs)
+b32 clm_string_eq_icase(clm_string *lhs, clm_string *rhs)
 {
     clm_string *llhs = NULL, *rrhs = NULL;
     u64 lhash = 0, rhash = 0;
@@ -266,7 +266,7 @@ bool clm_string_eq_icase(clm_string *lhs, clm_string *rhs)
 
 isize clm_string_find(clm_string *str, u8 chr)
 {
-    bool found  = false;
+    b32 found   = FALSE;
     isize index = 0;
     usize iter  = 0;
 
@@ -287,7 +287,7 @@ isize clm_string_find(clm_string *str, u8 chr)
 
     for (; iter < str->len; ++iter) {
         if (str->ptr[iter] == chr) {
-            found = true;
+            found = TRUE;
             break;
         }
     }
@@ -297,7 +297,7 @@ isize clm_string_find(clm_string *str, u8 chr)
 
 isize clm_string_find_rev(clm_string *str, u8 chr)
 {
-    bool found  = false;
+    b32 found   = FALSE;
     isize index = 0;
     usize iter  = str->len;
 
@@ -318,7 +318,7 @@ isize clm_string_find_rev(clm_string *str, u8 chr)
 
     while (iter--) {
         if (str->ptr[iter] == chr) {
-            found = true;
+            found = TRUE;
             break;
         }
     }
