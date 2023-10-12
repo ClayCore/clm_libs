@@ -1,3 +1,4 @@
+add_subdirectory(clm_libcpp_utils)
 add_subdirectory(clm_libcpp_traits)
 add_subdirectory(clm_libcpp_types)
 add_subdirectory(clm_libcpp_math)

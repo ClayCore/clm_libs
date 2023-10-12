@@ -44,6 +44,6 @@ namespace clm::types
     using StrongType = StrongTypeImpl<T, Tag, std::ratio<1>>;
 
     using Gram = StrongType<f64, struct GramTag>;
-};     // namespace clm::types
+};  // namespace clm::types
 
-#endif /* CLM_LIBCPP_TYPES_GUARD */
+#endif  // CLM_LIBCPP_TYPES_GUARD

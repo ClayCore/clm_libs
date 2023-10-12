@@ -8,4 +8,4 @@ namespace clm::traits
 
 }
 
-#endif /* CLM_LIBCPP_MATH_GUARD */
+#endif  // CLM_LIBCPP_MATH_GUARD

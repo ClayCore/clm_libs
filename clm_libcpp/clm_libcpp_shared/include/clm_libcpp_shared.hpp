@@ -28,4 +28,4 @@ using f32  = std::float_t;
 using f64  = std::double_t;
 using f128 = long double;
 
-#endif /* CLM_LIBCPP_SHARED_GUARD */
+#endif  // CLM_LIBCPP_SHARED_GUARD
