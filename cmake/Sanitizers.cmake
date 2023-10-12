@@ -10,7 +10,7 @@ function(
     if(CMAKE_CXX_COMPILER_ID MATCHES ".*GNU.*" OR CMAKE_CXX_COMPILER_ID MATCHES ".*Clang.*")
         set(sanitizers "")
 
-        if(${enable_sanitizer_address})
+        if(${enable_sanitizer_address} AND NOT MINGW)
             list(APPEND sanitizers "address")
         endif()
 
@@ -40,7 +40,7 @@ function(
             endif()
         endif()
     elseif(MSVC)
-        if(${enable_sanitizer_address})
+        if(${enable_sanitizer_address} AND NOT MINGW)
             list(APPEND sanitizers "address")
         endif()
 
