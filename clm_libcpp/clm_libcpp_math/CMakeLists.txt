@@ -22,8 +22,8 @@ set_target_properties(
     clm_libcpp_math
     PROPERTIES
     VERSION ${PROJECT_VERSION}
-    CXX_VISIBILITY_PRESET hidden
-    VISIBILITY_INLINES_HIDDEN YES
+
+    # VISIBILITY_INLINES_HIDDEN YES
 )
 
 # Horrible hack for integration with `compile_commands.json`
@@ -52,8 +52,8 @@ set_target_properties(
     clm_libcpp_math_dummy
     PROPERTIES
     VERSION ${PROJECT_VERSION}
-    CXX_VISIBILITY_PRESET hidden
-    VISIBILITY_INLINES_HIDDEN YES
+
+    # VISIBILITY_INLINES_HIDDEN YES
 )
 
 if(NOT BUILD_SHARED_LIBS)
