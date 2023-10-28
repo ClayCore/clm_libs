@@ -3,14 +3,31 @@
 
 #include <chrono>
 #include <concepts>
+#include <iostream>
 #include <type_traits>
 #include <vector>
 
 #include "clm_libcpp_shared.hpp"
 
+namespace clm::types
+{
+    class Debug;
+}
+
 namespace clm::traits
 {
+    template <typename T>
+    concept IsBaseDebug = std::derived_from<T, clm::types::Debug>;
 
+    template <typename T>
+    concept IsOutPrint = requires(T t) {
+        // clang-format off
+        { std::cout << t };
+        // clang-format on
+    };
+
+    template <typename T>
+    concept IsPrintable = IsBaseDebug<T> || IsOutPrint<T>;
 
     /*
     template <typename T>
