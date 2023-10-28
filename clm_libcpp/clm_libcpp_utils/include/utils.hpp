@@ -1,7 +1,6 @@
 #ifndef CLM_LIBCPP_UTILS_GUARD
 #define CLM_LIBCPP_UTILS_GUARD
 
-#include <bits/utility.h>
 #include <type_traits>
 #include <utility>
 
