@@ -1,5 +1,4 @@
 {
-    "clangd.arguments": ["--background-index", "--compile-commands-dir=build"],
     "files.associations": {
         "*.h": "c"
     },
@@ -15,8 +14,6 @@
         "editor.minimap.renderCharacters": false,
         "editor.rulers": [120]
     },
-    "cmake.configureOnOpen": false,
-    "cmake.configureOnEdit": false,
     "[c]": {
         "editor.quickSuggestions": {
             "other": "on",
@@ -37,6 +34,10 @@
         "editor.rulers": [80],
         "editor.wordWrap": "bounded"
     },
+
+    "cmake.configureOnOpen": false,
+    "cmake.configureOnEdit": false,
+    "clangd.arguments": ["--background-index", "--compile-commands-dir=build"],
     "latex-workshop.latex.tools": [
         {
             "name": "latexmk",
