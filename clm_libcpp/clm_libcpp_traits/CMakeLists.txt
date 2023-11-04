@@ -14,6 +14,7 @@ target_include_directories(
     ${WARNING_GUARD}
     INTERFACE
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/clm_libcpp/clm_libcpp_shared/include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/clm_libcpp/clm_libcpp_meta/include>
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/clm_libcpp/clm_libcpp_traits/include>
 )
 target_compile_features(clm_libcpp_traits INTERFACE cxx_std_20)
@@ -44,6 +45,7 @@ target_include_directories(
     ${WARNING_GUARD}
     PRIVATE
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/clm_libcpp/clm_libcpp_shared/include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/clm_libcpp/clm_libcpp_meta/include>
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/clm_libcpp/clm_libcpp_traits/include>
 )
 target_compile_features(clm_libcpp_traits_dummy INTERFACE cxx_std_20)

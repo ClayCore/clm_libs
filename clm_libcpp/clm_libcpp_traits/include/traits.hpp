@@ -1,5 +1,4 @@
-#ifndef CLM_LIBCPP_TRAITS_GUARD
-#define CLM_LIBCPP_TRAITS_GUARD
+#pragma once
 
 #include <chrono>
 #include <concepts>
@@ -9,75 +8,43 @@
 
 #include "clm_libcpp_shared.hpp"
 
-namespace clm::types
-{
-    class Debug;
-}
 
 namespace clm::traits
 {
-    template <typename T>
-    concept IsBaseDebug = std::derived_from<T, clm::types::Debug>;
-
-    template <typename T>
-    concept IsOutPrint = requires(T t) {
-        // clang-format off
-        { std::cout << t };
-        // clang-format on
-    };
-
-    template <typename T>
-    concept IsPrintable = IsBaseDebug<T> || IsOutPrint<T>;
-
-    /*
-    template <typename T>
-    struct is_vector: std::false_type
+    template <typename Derived>
+    class TDisplay
     {
+    private:
+        using base_type    = TDisplay<Derived>;
+        using derived_type = Derived;
+
+        auto inline derived() -> derived_type &;
+        auto inline derived() const -> derived_type const &;
+
+    public:
+        constexpr TDisplay() = default;
+
+        TDisplay(TDisplay const &)                     = default;
+        auto operator=(TDisplay const &) -> TDisplay & = default;
+
+        TDisplay(TDisplay &&)                     = default;
+        auto operator=(TDisplay &&) -> TDisplay & = default;
+
+        ~TDisplay() = default;
+
+        auto to_string(u32 indent = 0U) const -> std::string;
+        auto display(u32 indent = 0U) const -> void;
+
+        auto constexpr operator<=>(TDisplay const &) const        = default;
+        auto constexpr operator==(TDisplay const &) const -> bool = default;
+        auto constexpr operator!=(TDisplay const &) const -> bool = default;
+
+        auto friend inline operator<<(std::ostream &os, TDisplay const &display)
+            -> std::ostream &
+        {
+            return os << display.to_string();
+        }
     };
-
-    template <typename T>
-    struct is_vector<std::vector<T>>: std::true_type
-    {
-    };
-
-    template <typename T>
-    struct is_duration: std::false_type
-    {
-    };
-
-    template <typename R, typename P>
-    struct is_duration<std::chrono::duration<R, P>>: std::true_type
-    {
-    };
-
-    template <typename T>
-    bool constexpr const static is_vector_v = is_vector<T>::value;
-
-    template <typename T>
-    bool constexpr const static is_duration_v = is_duration<T>::value;
-
-    template <typename T>
-    concept IsVector = is_vector_v<T>;
-
-    template <typename T>
-    concept IsContainer = requires(T t) {
-        // clang-format off
-        { std::begin(t)                };
-        { std::begin(t)++              };
-        { std::end(t)                  };
-        { *std::begin(t)               };
-        { *std::begin(t)               } -> std::same_as<void>;
-        { std::begin(t) != std::end(t) } -> std::same_as<bool>;
-        std::destructible<decltype(std::begin(t))> &&
-        std::destructible<decltype(std::end(t))> &&
-        std::copy_constructible<decltype(std::begin(t))> &&
-        std::copy_constructible<decltype(std::end(t))>;
-        // clang-format on
-    };
-
-    template <typename D, typename B>
-    concept IsDerivedFrom = std::derived_from<B, D>;
-    */
 }  // namespace clm::traits
 
-#endif  // CLM_LIBCPP_TRAITS_GUARD
+#include "traits.tpp"
