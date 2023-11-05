@@ -8,6 +8,8 @@
 
 # Properties
 
+*.tpp               text linguist-language=C++
+
 *.bash              text eol=lf
 *.coffee            text
 *.css               text
