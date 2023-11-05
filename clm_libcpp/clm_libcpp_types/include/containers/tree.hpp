@@ -8,12 +8,14 @@
 #include <vector>
 
 #include "clm_libcpp_shared.hpp"
+#include "meta.hpp"
+#include "traits.hpp"
 
 
 namespace clm::types::containers
 {
-    template <typename T>
-    class TreeNode
+    template <clm::meta::IsPrintable T>
+    class TreeNode: clm::traits::TDisplay<TreeNode<T>>
     {
     private:
         TreeNode *m_parent { nullptr };
@@ -37,7 +39,9 @@ namespace clm::types::containers
         auto insert(TreeNode const &node) -> void;
         auto remove(TreeNode const &node) -> void;
 
-        template <typename U>
+        auto to_string_impl(u32 indent = 0U) const -> std::string;
+
+        template <class U>
         auto static ancestor(TreeNode<U> *first, TreeNode<U> *second) -> TreeNode<U> *
         {
             if (!first || !second) {
