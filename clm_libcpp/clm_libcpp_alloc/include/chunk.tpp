@@ -4,13 +4,14 @@
 #include "util/display_buffer.hpp"
 
 
-namespace alloc
+namespace clm::alloc
 {
-    Chunk::Chunk(void *p, usize s): ptr { p }, size { s }
+    constexpr Chunk::operator byte *()
     {
+        return static_cast<byte *>(ptr);
     }
 
-    constexpr Chunk::operator byte *()
+    constexpr Chunk::operator byte *() const
     {
         return static_cast<byte *>(ptr);
     }
@@ -25,8 +26,9 @@ namespace alloc
         vec.push_back(std::format("address:\t0x{:x}", addr));
         vec.push_back(std::format("size:\t\t0x{:x}", size));
 
-        clm::types::util::DisplayBuffer buf { vec };
+        auto buf = types::util::DisplayBuffer { vec };
         buf.add_indent(indent);
+
         return buf.implode();
     }
-}  // namespace alloc
+}  // namespace clm::alloc
