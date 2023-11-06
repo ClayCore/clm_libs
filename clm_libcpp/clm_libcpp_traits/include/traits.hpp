@@ -117,7 +117,7 @@ namespace clm::traits
         auto owns(block_type const &block) const -> bool;
         auto free(block_type &block) -> void;
 
-        auto to_string_impl(u32 indent = 0) const -> std::string;
+        auto to_string_impl(u32 indent = 0U) const -> std::string;
     };
 }  // namespace clm::traits
 
