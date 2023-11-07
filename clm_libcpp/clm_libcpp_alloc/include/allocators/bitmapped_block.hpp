@@ -14,9 +14,8 @@
 
 namespace clm::alloc::detail
 {
-    /*****************************************************************************************
-     * BitmappedBlockHelper
-     ****************************************************************************************/
+    /* #region BitmappedBlockHelper */
+
     template <class Instance>
     class BitmappedBlockHelper final
     {
@@ -30,9 +29,10 @@ namespace clm::alloc::detail
         auto inline &get_bitmap() noexcept;
     };
 
-    /*****************************************************************************************
-     * BitmapHelper
-     ****************************************************************************************/
+    /* #endregion BitmappedBlockHelper */
+
+    /* #region BitmapHelper */
+
     template <class Instance>
     class BitmapHelper
     {
@@ -46,9 +46,10 @@ namespace clm::alloc::detail
         auto constexpr flags_count() const noexcept -> usize;
     };
 
-    /*****************************************************************************************
-     * Bitmap
-     ****************************************************************************************/
+    /* #endregion BitmapHelper */
+
+    /* #region Bitmap */
+
     template <usize Size>
     class Bitmap
     {
@@ -62,16 +63,16 @@ namespace clm::alloc::detail
         auto static constexpr flag_mask(byte index) -> byte;
 
     public:
-        auto inline set(usize index) -> void;
-
-        auto inline reset(usize index) -> void;
-
-        auto inline reset_all() -> void;
-
         auto inline is_set(usize index) -> bool;
-
         auto inline claim(usize &index) -> bool;
+
+        auto inline set(usize index) -> void;
+        auto inline reset(usize index) -> void;
+        auto inline reset_all() -> void;
     };
+
+    /* #endregion Bitmap */
+
 }  // namespace clm::alloc::detail
 
 namespace clm::alloc
@@ -109,3 +110,5 @@ namespace clm::alloc
         bitmap_type *m_bitmap { nullptr };
     };
 }  // namespace clm::alloc
+
+#include "bitmapped_block.tpp"

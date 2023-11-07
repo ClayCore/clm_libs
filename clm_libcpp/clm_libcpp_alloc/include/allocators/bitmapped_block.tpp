@@ -11,9 +11,7 @@
 
 namespace clm::alloc::detail
 {
-    /*****************************************************************************************
-     * BitmappedBlockHelper
-     ****************************************************************************************/
+    /* #region BitmappedBlockHelper */
 
     template <class Instance>
     BitmappedBlockHelper<Instance>::BitmappedBlockHelper(Instance &instance) noexcept
@@ -33,9 +31,9 @@ namespace clm::alloc::detail
         return *(m_instance.m_bitmap);
     }
 
-    /*****************************************************************************************
-     * BitmapHelper
-     ****************************************************************************************/
+    /* #endregion BitmappedBlockHelper */
+
+    /* #region BitmapHelper */
 
     template <class Instance>
     BitmapHelper<Instance>::BitmapHelper(Instance &instance) noexcept
@@ -55,9 +53,9 @@ namespace clm::alloc::detail
         return sizeof(m_instance.m_flags);
     }
 
-    /*****************************************************************************************
-     * Bitmap
-     ****************************************************************************************/
+    /* #endregion BitmapHelper */
+
+    /* #region Bitmap */
 
     template <usize Size>
     auto constexpr Bitmap<Size>::flag_mask(byte index) -> byte
@@ -129,6 +127,8 @@ namespace clm::alloc::detail
         return false;
     }
 
+    /* #endregion Bitmap */
+
 }  // namespace clm::alloc::detail
 
 namespace clm::alloc
@@ -187,5 +187,34 @@ namespace clm::alloc
 
         uptr const offset { block - start_addr };
         return (offset % aligned_size) == 0U;
+    }
+
+    template <class Allocator, usize Min, usize Max, usize Capacity, usize Align>
+    requires(is_power_of_two(Capacity) and Align > 0U)
+    auto BitmappedBlock<Allocator, Min, Max, Capacity, Align>::free_impl(
+        trait::block_type &block) -> void
+    {
+        if (this->owns(block)) {
+            byte const *ptr { m_alloc_chunk };
+            byte const *start_addr { align_front<Align>(ptr + sizeof(bitmap_type)) };
+            auto offset = block - start_addr;
+            auto index  = offset / aligned_size;
+
+            m_bitmap->reset(index);
+            block = NULL_CHUNK;
+        }
+    }
+
+    template <class Allocator, usize Min, usize Max, usize Capacity, usize Align>
+    requires(is_power_of_two(Capacity) and Align > 0U)
+    auto BitmappedBlock<Allocator, Min, Max, Capacity, Align>::to_string_impl(
+        u32 indent) const -> std::string
+    {
+        std::vector<std::string> vec {};
+
+        auto buf = types::util::DisplayBuffer { vec };
+        buf.add_indent(indent);
+
+        return buf.implode();
     }
 }  // namespace clm::alloc
